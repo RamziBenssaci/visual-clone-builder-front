@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Merchant Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="bg-white bg-opacity-20 p-2 rounded-lg">
+                <i class="fas fa-award w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-lg lg:text-xl font-bold">Merchant Admin Panel</h1>
+                <p class="text-blue-100 text-xs lg:text-sm hidden sm:block">Complete loyalty program management</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 lg:space-x-4">
+            <button class="bg-white bg-opacity-20 hover:bg-white hover:bg-opacity-30 px-2 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-medium transition-colors hidden sm:block">
+                Customer Portal
+            </button>
+            <div class="flex items-center space-x-2">
+                <span class="text-xs lg:text-sm hidden md:inline">Welcome</span>
+                <span class="font-medium text-xs lg:text-sm">Admin</span>
+                <div class="bg-white bg-opacity-20 p-2 rounded-full">
+                    <i class="fas fa-user w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="px-2 lg:px-6">
+            <!-- Desktop Navigation -->
+            <div class="hidden lg:flex space-x-0">
+                <a href="dashboard.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-chart-bar w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="customers.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-users w-4 h-4"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="register.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-user w-4 h-4"></i>
+                    <span>Register</span>
+                </a>
+                <a href="earn.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-award w-4 h-4"></i>
+                    <span>Earn</span>
+                </a>
+                <a href="redeem.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-gift w-4 h-4"></i>
+                    <span>Redeem</span>
+                </a>
+                <a href="campaigns.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-star w-4 h-4"></i>
+                    <span>Campaigns</span>
+                </a>
+                <a href="transactions.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 bg-blue-50">
+                    <i class="fas fa-credit-card w-4 h-4"></i>
+                    <span>Transactions</span>
+                </a>
+                <a href="settings.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
+                    <i class="fas fa-cog w-4 h-4"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="grid grid-cols-4 gap-1 lg:hidden py-2">
+                <a href="dashboard.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-bar w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Dashboard</span>
+                </a>
+                <a href="customers.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-users w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Customers</span>
+                </a>
+                <a href="register.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-user w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Register</span>
+                </a>
+                <a href="earn.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-award w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Earn</span>
+                </a>
+                <a href="redeem.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-gift w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Redeem</span>
+                </a>
+                <a href="campaigns.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-star w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Campaigns</span>
+                </a>
+                <a href="transactions.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-blue-600 bg-blue-50">
+                    <i class="fas fa-credit-card w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Transactions</span>
+                </a>
+                <a href="settings.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-cog w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Settings</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-credit-card w-5 h-5 text-gray-600"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Transactions</h2>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <p class="text-gray-600">Transaction history will be displayed here.</p>
+        </div>
+    </main>
+</body>
+</html>

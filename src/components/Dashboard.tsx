@@ -1,7 +1,6 @@
 
 import { BarChart3, Users, Award, Gift, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
@@ -47,12 +46,12 @@ const Dashboard = () => {
   ];
 
   const monthlyData = [
-    { month: "January", earned: 2500, redeemed: 1200 },
-    { month: "February", earned: 1400, redeemed: 800 },
-    { month: "March", earned: 4000, redeemed: 1300 },
-    { month: "April", earned: 3800, redeemed: 1200 },
+    { month: "Jan", earned: 2500, redeemed: 1200 },
+    { month: "Feb", earned: 1400, redeemed: 800 },
+    { month: "Mar", earned: 4000, redeemed: 1300 },
+    { month: "Apr", earned: 3800, redeemed: 1200 },
     { month: "May", earned: 5000, redeemed: 1500 },
-    { month: "June", earned: 3500, redeemed: 1100 }
+    { month: "Jun", earned: 3500, redeemed: 1100 }
   ];
 
   const recentActivity = [
@@ -85,17 +84,6 @@ const Dashboard = () => {
       endDate: "Until 3/31/2024"
     }
   ];
-
-  const chartConfig = {
-    earned: {
-      label: "Points Earned",
-      color: "#3B82F6",
-    },
-    redeemed: {
-      label: "Points Redeemed", 
-      color: "#10B981",
-    },
-  };
 
   return (
     <div>
@@ -156,7 +144,6 @@ const Dashboard = () => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -183,16 +170,17 @@ const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-64">
-              <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="earned" fill="#3B82F6" />
-                <Bar dataKey="redeemed" fill="#10B981" />
-              </BarChart>
-            </ChartContainer>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Bar dataKey="earned" fill="#3B82F6" />
+                  <Bar dataKey="redeemed" fill="#10B981" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
