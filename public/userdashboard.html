@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,14 +43,10 @@
                     <i class="fas fa-gift w-4 h-4"></i>
                     <span>Redeem Points</span>
                 </a>
-                <a href="userregister.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-purple-600 hover:border-purple-300">
-                    <i class="fas fa-user-plus w-4 h-4"></i>
-                    <span>Register</span>
-                </a>
             </div>
 
             <!-- Mobile Navigation -->
-            <div class="grid grid-cols-4 gap-1 lg:hidden py-2">
+            <div class="grid grid-cols-2 gap-1 lg:hidden py-2">
                 <a href="userdashboard.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-purple-600 bg-purple-50">
                     <i class="fas fa-chart-bar w-5 h-5 mb-1"></i>
                     <span class="text-center leading-tight">Dashboard</span>
@@ -59,14 +54,6 @@
                 <a href="userredeem.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
                     <i class="fas fa-gift w-5 h-5 mb-1"></i>
                     <span class="text-center leading-tight">Redeem</span>
-                </a>
-                <a href="userregister.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
-                    <i class="fas fa-user-plus w-5 h-5 mb-1"></i>
-                    <span class="text-center leading-tight">Register</span>
-                </a>
-                <a href="#" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
-                    <i class="fas fa-cog w-5 h-5 mb-1"></i>
-                    <span class="text-center leading-tight">Settings</span>
                 </a>
             </div>
         </div>
@@ -284,5 +271,54 @@
             </div>
         </div>
     </main>
+
+    <!-- Floating Help Button -->
+    <button onclick="showHelp()" class="fixed bottom-6 right-6 bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors z-50">
+        <span class="text-lg font-bold">?</span>
+    </button>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h3 class="text-lg font-semibold mb-4">Customer Roles & Features</h3>
+            <ul class="space-y-2 text-sm text-gray-700">
+                <li class="flex items-start">
+                    <span class="text-purple-600 mr-2">•</span>
+                    View your current points balance and tier status
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 mr-2">•</span>
+                    Track all your points activity history
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 mr-2">•</span>
+                    Submit point redemption requests
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 mr-2">•</span>
+                    Access exclusive member benefits
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 mr-2">•</span>
+                    Receive special birthday rewards
+                </li>
+            </ul>
+            <button onclick="closeHelp()" class="mt-4 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showHelp() {
+            document.getElementById('helpModal').classList.remove('hidden');
+            document.getElementById('helpModal').classList.add('flex');
+        }
+
+        function closeHelp() {
+            document.getElementById('helpModal').classList.add('hidden');
+            document.getElementById('helpModal').classList.remove('flex');
+        }
+    </script>
 </body>
 </html>

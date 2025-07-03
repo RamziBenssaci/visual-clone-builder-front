@@ -1,18 +1,11 @@
 
-import { BarChart3, Users, Award, Gift, Star, TrendingUp, Minus, Search, Check, X } from "lucide-react";
+import { BarChart3, Users, Award, Gift, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
 const Dashboard = () => {
-  const [searchPhone, setSearchPhone] = useState("");
-  const [foundCustomer, setFoundCustomer] = useState(null);
-  const [refundAmount, setRefundAmount] = useState("");
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [deductionComplete, setDeductionComplete] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const stats = [
     {
@@ -95,40 +88,17 @@ const Dashboard = () => {
     }
   ];
 
-  const handleSearchCustomer = () => {
-    if (searchPhone) {
-      // Mock customer data
-      setFoundCustomer({
-        name: "Ahmed Mohammed",
-        phone: searchPhone,
-        currentPoints: 1250,
-        lastTransaction: "$75.00",
-        transactionDate: "2024-01-15",
-        tier: "Gold"
-      });
-    }
-  };
-
-  const handleDeductPoints = () => {
-    if (refundAmount && foundCustomer) {
-      const pointsToDeduct = Math.floor(parseFloat(refundAmount) * 5); // 5 points per dollar
-      setShowConfirmation(true);
-    }
-  };
-
-  const confirmDeduction = () => {
-    setDeductionComplete(true);
-    setShowConfirmation(false);
-    setTimeout(() => {
-      setDeductionComplete(false);
-      setFoundCustomer(null);
-      setSearchPhone("");
-      setRefundAmount("");
-    }, 3000);
-  };
+  const adminRoles = [
+    "View all customer data and analytics",
+    "Manage loyalty campaigns and rewards",
+    "Process point transactions (earn/redeem/deduct)",
+    "Access customer registration and management",
+    "Generate reports and view transaction history",
+    "Configure system settings and parameters"
+  ];
 
   return (
-    <div>
+    <div className="relative">
       <div className="flex items-center space-x-2 mb-6">
         <BarChart3 className="w-5 h-5 text-gray-600" />
         <h2 className="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
@@ -158,129 +128,6 @@ const Dashboard = () => {
           );
         })}
       </div>
-
-      {/* Point Deduction Section */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Minus className="w-5 h-5" />
-            Point Deduction (Refund Handling)
-          </CardTitle>
-          <CardDescription>
-            Deduct loyalty points from customers when processing refunds
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!foundCustomer && !deductionComplete && (
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Label htmlFor="phone-search">Customer Phone Number</Label>
-                  <Input
-                    id="phone-search"
-                    type="tel"
-                    placeholder="Enter phone number"
-                    value={searchPhone}
-                    onChange={(e) => setSearchPhone(e.target.value)}
-                  />
-                </div>
-                <Button onClick={handleSearchCustomer} className="mt-6">
-                  <Search className="w-4 h-4 mr-2" />
-                  Search
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {foundCustomer && !showConfirmation && !deductionComplete && (
-            <div className="space-y-6">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-900 mb-2">Customer Found</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-blue-700">Name: {foundCustomer.name}</p>
-                    <p className="text-sm text-blue-700">Phone: {foundCustomer.phone}</p>
-                    <p className="text-sm text-blue-700">Tier: {foundCustomer.tier}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-700">Current Points: {foundCustomer.currentPoints}</p>
-                    <p className="text-sm text-blue-700">Last Transaction: {foundCustomer.lastTransaction}</p>
-                    <p className="text-sm text-blue-700">Date: {foundCustomer.transactionDate}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="refund-amount">Refund Amount ($)</Label>
-                  <Input
-                    id="refund-amount"
-                    type="number"
-                    step="0.01"
-                    placeholder="Enter refund amount"
-                    value={refundAmount}
-                    onChange={(e) => setRefundAmount(e.target.value)}
-                  />
-                  {refundAmount && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      Points to deduct: {Math.floor(parseFloat(refundAmount) * 5)} points
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button onClick={handleDeductPoints} disabled={!refundAmount}>
-                    Deduct Points
-                  </Button>
-                  <Button variant="outline" onClick={() => setFoundCustomer(null)}>
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {showConfirmation && (
-            <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="bg-yellow-100 p-2 rounded-full">
-                  <Minus className="w-5 h-5 text-yellow-600" />
-                </div>
-                <h3 className="font-semibold text-yellow-900">Confirm Point Deduction</h3>
-              </div>
-              <div className="space-y-2 mb-4">
-                <p className="text-yellow-800">Customer: {foundCustomer.name}</p>
-                <p className="text-yellow-800">Refund Amount: ${refundAmount}</p>
-                <p className="text-yellow-800">Points to Deduct: {Math.floor(parseFloat(refundAmount) * 5)} points</p>
-                <p className="text-yellow-800">Remaining Points: {foundCustomer.currentPoints - Math.floor(parseFloat(refundAmount) * 5)} points</p>
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={confirmDeduction} className="bg-red-600 hover:bg-red-700">
-                  <Check className="w-4 h-4 mr-2" />
-                  Confirm Deduction
-                </Button>
-                <Button variant="outline" onClick={() => setShowConfirmation(false)}>
-                  <X className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {deductionComplete && (
-            <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-              <div className="flex items-center gap-3">
-                <div className="bg-green-100 p-2 rounded-full">
-                  <Check className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-green-900">Points Successfully Deducted</h3>
-                  <p className="text-green-800">The customer has been notified of the point deduction.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -418,6 +265,37 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Floating Help Button */}
+      <button
+        onClick={() => setShowHelp(!showHelp)}
+        className="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
+      >
+        <span className="text-lg font-bold">?</span>
+      </button>
+
+      {/* Help Modal */}
+      {showHelp && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">Admin Roles & Permissions</h3>
+            <ul className="space-y-2 text-sm text-gray-700">
+              {adminRoles.map((role, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="text-blue-600 mr-2">•</span>
+                  {role}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => setShowHelp(false)}
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

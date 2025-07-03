@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "@/components/Layout";
 import Dashboard from "@/components/Dashboard";
@@ -7,6 +6,7 @@ import Customers from "@/components/Customers";
 import Register from "@/components/Register";
 import Earn from "@/components/Earn";
 import Redeem from "@/components/Redeem";
+import Remove from "@/components/Remove";
 import Campaigns from "@/components/Campaigns";
 import Transactions from "@/components/Transactions";
 import Settings from "@/components/Settings";
@@ -21,6 +21,7 @@ const Index = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/earn" element={<Earn />} />
           <Route path="/redeem" element={<Redeem />} />
+          <Route path="/remove" element={<Remove />} />
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/settings" element={<Settings />} />
