@@ -79,14 +79,14 @@ const Campaigns = () => {
 
       {/* Campaign Management Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
           <div className="flex items-center space-x-2">
             <Star className="w-5 h-5" />
             <h3 className="text-lg font-semibold">Campaign Management</h3>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+            className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 w-full sm:w-auto justify-center"
           >
             <Plus className="w-4 h-4" />
             <span>New Campaign</span>
@@ -95,7 +95,7 @@ const Campaigns = () => {
       </div>
 
       {/* Campaigns List */}
-      <div className="bg-white p-6 rounded-b-lg shadow-sm">
+      <div className="bg-white p-4 lg:p-6 rounded-b-lg shadow-sm">
         {campaigns.length === 0 ? (
           <div className="text-center py-12">
             <Star className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -104,12 +104,12 @@ const Campaigns = () => {
         ) : (
           <div className="space-y-4">
             {campaigns.map((campaign) => (
-              <div key={campaign.id} className="border border-gray-200 rounded-lg p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h4 className="text-lg font-semibold text-gray-800">{campaign.name}</h4>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
+              <div key={campaign.id} className="border border-gray-200 rounded-lg p-4 lg:p-6">
+                <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start space-y-4 lg:space-y-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
+                      <h4 className="text-lg font-semibold text-gray-800 break-words">{campaign.name}</h4>
+                      <span className={`px-2 py-1 rounded text-xs font-medium w-fit ${
                         campaign.status === 'Active' 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
@@ -117,19 +117,19 @@ const Campaigns = () => {
                         {campaign.status}
                       </span>
                     </div>
-                    <p className="text-gray-600 mb-4">{campaign.description}</p>
-                    <div className="flex items-center space-x-6 text-sm text-gray-600">
+                    <p className="text-gray-600 mb-4 break-words">{campaign.description}</p>
+                    <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-600">
                       <div className="flex items-center space-x-1">
                         <span>📅</span>
-                        <span>{campaign.startDate} - {campaign.endDate}</span>
+                        <span className="break-words">{campaign.startDate} - {campaign.endDate}</span>
                       </div>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
                         <span><strong>Earn:</strong> {campaign.earnRate}</span>
                         <span><strong>Redeem:</strong> {campaign.redeemRate}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex space-x-2 ml-4">
+                  <div className="flex space-x-2 lg:ml-4 justify-end">
                     <button
                       onClick={() => handleEdit(campaign)}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"

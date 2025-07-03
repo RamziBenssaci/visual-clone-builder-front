@@ -43,85 +43,87 @@ const Register = () => {
       </div>
 
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
-        <form onSubmit={handleSubmit} className="max-w-md">
-          <div className="space-y-4">
-            <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
-                <User className="w-4 h-4 text-blue-600" />
-                <span>Full Name</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Enter full name"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
+        <div className="flex justify-center">
+          <form onSubmit={handleSubmit} className="w-full max-w-md">
+            <div className="space-y-4">
+              <div>
+                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
+                  <User className="w-4 h-4 text-blue-600" />
+                  <span>Full Name</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter full name"
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
-                <span>📞</span>
-                <span>Phone Number</span>
-              </label>
-              <input
-                type="tel"
-                placeholder="05xxxxxxxx"
-                value={formData.phoneNumber}
-                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
+              <div>
+                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
+                  <span>📞</span>
+                  <span>Phone Number</span>
+                </label>
+                <input
+                  type="tel"
+                  placeholder="05xxxxxxxx"
+                  value={formData.phoneNumber}
+                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
-              </label>
-              <select
-                value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender
+                </label>
+                <select
+                  value={formData.gender}
+                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
+                  <span>🔒</span>
+                  <span>PIN Code (4 digits)</span>
+                </label>
+                <input
+                  type="password"
+                  placeholder="••••"
+                  maxLength={4}
+                  value={formData.pinCode}
+                  onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  This code is used to access the customer portal
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
               >
-                <option value="">Select gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
+                <User className="w-4 h-4" />
+                <span>Register Customer</span>
+              </button>
             </div>
-
-            <div>
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
-                <span>🔒</span>
-                <span>PIN Code (4 digits)</span>
-              </label>
-              <input
-                type="password"
-                placeholder="••••"
-                maxLength={4}
-                value={formData.pinCode}
-                onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                This code is used to access the customer portal
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-            >
-              <User className="w-4 h-4" />
-              <span>Register Customer</span>
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
 
         {/* Important Information */}
-        <div className="bg-blue-50 p-4 rounded-lg mt-6">
+        <div className="bg-blue-50 p-4 rounded-lg mt-6 max-w-md mx-auto">
           <h4 className="font-medium text-blue-800 mb-2">Important Information:</h4>
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• Customer will receive a Bronze tier account</li>
@@ -131,7 +133,7 @@ const Register = () => {
         </div>
 
         {/* Recently Registered Customers */}
-        <div className="mt-8">
+        <div className="mt-8 max-w-2xl mx-auto">
           <h4 className="font-semibold text-gray-800 mb-4">Recently Registered Customers</h4>
           <div className="space-y-3">
             {recentCustomers.map((customer, index) => (

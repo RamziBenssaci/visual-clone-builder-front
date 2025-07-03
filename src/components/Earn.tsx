@@ -26,12 +26,12 @@ const Earn = () => {
 
       {/* Search Form */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
-        <div className="max-w-md">
+        <div className="max-w-md mx-auto lg:mx-0">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Customer Phone Number
             </label>
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
               <input
                 type="tel"
                 placeholder="05xxxxxxxx"
@@ -41,7 +41,7 @@ const Earn = () => {
               />
               <button
                 onClick={handleSearch}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
               >
                 <Search className="w-4 h-4" />
                 <span>Search</span>

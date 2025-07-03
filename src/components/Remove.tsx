@@ -63,30 +63,31 @@ const Remove = () => {
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         {!foundCustomer && !deductionComplete && (
           <div className="space-y-4">
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <Label htmlFor="phone-search">Customer Phone Number</Label>
+            <div className="max-w-md mx-auto lg:mx-0">
+              <Label htmlFor="phone-search">Customer Phone Number</Label>
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mt-1">
                 <Input
                   id="phone-search"
                   type="tel"
                   placeholder="Enter phone number"
                   value={searchPhone}
                   onChange={(e) => setSearchPhone(e.target.value)}
+                  className="flex-1"
                 />
+                <Button onClick={handleSearchCustomer} className="w-full sm:w-auto">
+                  <Search className="w-4 h-4 mr-2" />
+                  Search
+                </Button>
               </div>
-              <Button onClick={handleSearchCustomer} className="mt-6">
-                <Search className="w-4 h-4 mr-2" />
-                Search
-              </Button>
             </div>
           </div>
         )}
 
         {foundCustomer && !showConfirmation && !deductionComplete && (
-          <div className="space-y-6">
+          <div className="space-y-6 max-w-2xl mx-auto lg:mx-0">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <h3 className="font-semibold text-blue-900 mb-2">Customer Found</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-blue-700">Name: {foundCustomer.name}</p>
                   <p className="text-sm text-blue-700">Phone: {foundCustomer.phone}</p>
@@ -110,6 +111,7 @@ const Remove = () => {
                   placeholder="Enter refund amount"
                   value={refundAmount}
                   onChange={(e) => setRefundAmount(e.target.value)}
+                  className="max-w-xs"
                 />
                 {refundAmount && (
                   <p className="text-sm text-gray-600 mt-1">
@@ -130,7 +132,7 @@ const Remove = () => {
         )}
 
         {showConfirmation && (
-          <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
+          <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200 max-w-2xl mx-auto lg:mx-0">
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-yellow-100 p-2 rounded-full">
                 <Minus className="w-5 h-5 text-yellow-600" />
@@ -157,7 +159,7 @@ const Remove = () => {
         )}
 
         {deductionComplete && (
-          <div className="bg-green-50 p-6 rounded-lg border border-green-200">
+          <div className="bg-green-50 p-6 rounded-lg border border-green-200 max-w-2xl mx-auto lg:mx-0">
             <div className="flex items-center gap-3">
               <div className="bg-green-100 p-2 rounded-full">
                 <Check className="w-5 h-5 text-green-600" />
