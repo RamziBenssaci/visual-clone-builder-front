@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Loyalty Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="bg-white bg-opacity-20 p-2 rounded-lg">
+                <i class="fas fa-crown w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-lg lg:text-xl font-bold">Customer Portal</h1>
+                <p class="text-purple-100 text-xs lg:text-sm hidden sm:block">Your loyalty dashboard</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 lg:space-x-4">
+            <div class="flex items-center space-x-2">
+                <span class="text-xs lg:text-sm hidden md:inline">Welcome</span>
+                <span class="font-medium text-xs lg:text-sm">Ahmed Mohammed</span>
+                <div class="bg-white bg-opacity-20 p-2 rounded-full">
+                    <i class="fas fa-user w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="px-2 lg:px-6">
+            <!-- Desktop Navigation -->
+            <div class="hidden lg:flex space-x-0">
+                <a href="userdashboard.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-purple-600 border-purple-600 bg-purple-50">
+                    <i class="fas fa-chart-bar w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="userredeem.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-purple-600 hover:border-purple-300">
+                    <i class="fas fa-gift w-4 h-4"></i>
+                    <span>Redeem Points</span>
+                </a>
+                <a href="userregister.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-purple-600 hover:border-purple-300">
+                    <i class="fas fa-user-plus w-4 h-4"></i>
+                    <span>Register</span>
+                </a>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="grid grid-cols-4 gap-1 lg:hidden py-2">
+                <a href="userdashboard.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-purple-600 bg-purple-50">
+                    <i class="fas fa-chart-bar w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Dashboard</span>
+                </a>
+                <a href="userredeem.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
+                    <i class="fas fa-gift w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Redeem</span>
+                </a>
+                <a href="userregister.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
+                    <i class="fas fa-user-plus w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Register</span>
+                </a>
+                <a href="#" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
+                    <i class="fas fa-cog w-5 h-5 mb-1"></i>
+                    <span class="text-center leading-tight">Settings</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-4 lg:p-6">
+        <div class="flex items-center space-x-2 mb-6">
+            <i class="fas fa-chart-bar w-5 h-5 text-gray-600"></i>
+            <h2 class="text-2xl font-bold text-gray-800">My Dashboard</h2>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Current Points</p>
+                        <p class="text-3xl font-bold text-purple-600 mt-1">1,250</p>
+                        <p class="text-sm mt-1 text-green-600">+50 this week</p>
+                    </div>
+                    <div class="bg-purple-500 p-3 rounded-lg">
+                        <i class="fas fa-coins w-6 h-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Customer Tier</p>
+                        <p class="text-2xl font-bold text-yellow-600 mt-1">Gold</p>
+                        <p class="text-sm mt-1 text-yellow-600">Premium member</p>
+                    </div>
+                    <div class="bg-yellow-500 p-3 rounded-lg">
+                        <i class="fas fa-crown w-6 h-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Points Value</p>
+                        <p class="text-2xl font-bold text-green-600 mt-1">$62.50</p>
+                        <p class="text-sm mt-1 text-gray-500">20 pts = $1</p>
+                    </div>
+                    <div class="bg-green-500 p-3 rounded-lg">
+                        <i class="fas fa-dollar-sign w-6 h-6 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity History -->
+        <div class="bg-white rounded-lg shadow-sm mb-8">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-history w-5 h-5 mr-2 text-gray-600"></i>
+                        Activity History
+                    </h3>
+                    <select class="text-sm border border-gray-300 rounded-md px-3 py-1">
+                        <option>All Activity</option>
+                        <option>Points Earned</option>
+                        <option>Points Redeemed</option>
+                        <option>Points Deducted</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="space-y-4">
+                    <!-- Points Earned -->
+                    <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-green-100 p-2 rounded-full">
+                                <i class="fas fa-plus w-4 h-4 text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Points Earned</p>
+                                <p class="text-sm text-gray-600">Purchase at Main Store</p>
+                                <p class="text-xs text-gray-500">Jan 15, 2024 at 2:30 PM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-green-600">+250 points</p>
+                            <p class="text-sm text-gray-500">$50.00 purchase</p>
+                        </div>
+                    </div>
+
+                    <!-- Points Redeemed -->
+                    <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-blue-100 p-2 rounded-full">
+                                <i class="fas fa-gift w-4 h-4 text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Points Redeemed</p>
+                                <p class="text-sm text-gray-600">$10 Store Credit</p>
+                                <p class="text-xs text-gray-500">Jan 10, 2024 at 11:15 AM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-blue-600">-200 points</p>
+                            <p class="text-sm text-gray-500">Reward claimed</p>
+                        </div>
+                    </div>
+
+                    <!-- Points Deducted -->
+                    <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-red-100 p-2 rounded-full">
+                                <i class="fas fa-minus w-4 h-4 text-red-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Points Deducted</p>
+                                <p class="text-sm text-gray-600">Refund Processing</p>
+                                <p class="text-xs text-gray-500">Jan 5, 2024 at 3:45 PM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-red-600">-75 points</p>
+                            <p class="text-sm text-gray-500">$15.00 refund</p>
+                        </div>
+                    </div>
+
+                    <!-- Points Earned -->
+                    <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-green-100 p-2 rounded-full">
+                                <i class="fas fa-plus w-4 h-4 text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Points Earned</p>
+                                <p class="text-sm text-gray-600">Online Purchase</p>
+                                <p class="text-xs text-gray-500">Dec 28, 2023 at 9:20 AM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-green-600">+150 points</p>
+                            <p class="text-sm text-gray-500">$30.00 purchase</p>
+                        </div>
+                    </div>
+
+                    <!-- Birthday Bonus -->
+                    <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-purple-100 p-2 rounded-full">
+                                <i class="fas fa-birthday-cake w-4 h-4 text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Birthday Bonus</p>
+                                <p class="text-sm text-gray-600">Happy Birthday Reward</p>
+                                <p class="text-xs text-gray-500">Dec 20, 2023 at 12:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-purple-600">+100 points</p>
+                            <p class="text-sm text-gray-500">Special bonus</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                        View More History
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-bolt w-5 h-5 mr-2 text-yellow-600"></i>
+                    Quick Actions
+                </h3>
+                <div class="space-y-3">
+                    <a href="userredeem.html" class="block w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors text-center">
+                        <i class="fas fa-gift mr-2"></i>
+                        Redeem Points
+                    </a>
+                    <button class="block w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-qrcode mr-2"></i>
+                        Show QR Code
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-star w-5 h-5 mr-2 text-yellow-600"></i>
+                    Tier Benefits
+                </h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center text-green-600">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        5x points on special days
+                    </div>
+                    <div class="flex items-center text-green-600">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Free shipping on all orders
+                    </div>
+                    <div class="flex items-center text-green-600">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Exclusive gold member discounts
+                    </div>
+                    <div class="flex items-center text-green-600">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Priority customer support
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
