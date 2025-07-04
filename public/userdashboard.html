@@ -7,25 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
+    <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-3">
             <div class="bg-white bg-opacity-20 p-2 rounded-lg">
-                <i class="fas fa-crown w-6 h-6"></i>
+                <i class="fas fa-trophy text-xl"></i>
             </div>
             <div>
                 <h1 class="text-lg lg:text-xl font-bold">Customer Portal</h1>
-                <p class="text-purple-100 text-xs lg:text-sm hidden sm:block">Your loyalty dashboard</p>
+                <p class="text-blue-100 text-xs lg:text-sm hidden sm:block">Your loyalty program dashboard</p>
             </div>
         </div>
-        <div class="flex items-center space-x-2 lg:space-x-4">
-            <div class="flex items-center space-x-2">
-                <span class="text-xs lg:text-sm hidden md:inline">Welcome</span>
-                <span class="font-medium text-xs lg:text-sm">Ahmed Mohammed</span>
-                <div class="bg-white bg-opacity-20 p-2 rounded-full">
-                    <i class="fas fa-user w-4 h-4"></i>
-                </div>
+        <div class="flex items-center space-x-2">
+            <span class="text-xs lg:text-sm hidden md:inline">Welcome</span>
+            <span class="font-medium text-xs lg:text-sm">Ahmed Mohammed</span>
+            <div class="bg-white bg-opacity-20 p-2 rounded-full">
+                <i class="fas fa-user"></i>
             </div>
         </div>
     </header>
@@ -35,11 +33,11 @@
         <div class="px-2 lg:px-6">
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex space-x-0">
-                <a href="userdashboard.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-purple-600 border-purple-600 bg-purple-50">
+                <a href="userdashboard.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-blue-600 border-blue-600 bg-blue-50">
                     <i class="fas fa-chart-bar w-4 h-4"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="userredeem.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-purple-600 hover:border-purple-300">
+                <a href="userredeem.html" class="flex items-center space-x-2 px-6 py-4 text-sm font-medium border-b-2 text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-300">
                     <i class="fas fa-gift w-4 h-4"></i>
                     <span>Redeem Points</span>
                 </a>
@@ -47,20 +45,20 @@
 
             <!-- Mobile Navigation -->
             <div class="grid grid-cols-2 gap-1 lg:hidden py-2">
-                <a href="userdashboard.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-purple-600 bg-purple-50">
-                    <i class="fas fa-chart-bar w-5 h-5 mb-1"></i>
+                <a href="userdashboard.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-blue-600 bg-blue-50">
+                    <i class="fas fa-chart-bar text-xl mb-1"></i>
                     <span class="text-center leading-tight">Dashboard</span>
                 </a>
-                <a href="userredeem.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-purple-600 hover:bg-gray-50">
-                    <i class="fas fa-gift w-5 h-5 mb-1"></i>
-                    <span class="text-center leading-tight">Redeem</span>
+                <a href="userredeem.html" class="flex flex-col items-center justify-center p-3 text-xs font-medium rounded-lg text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                    <i class="fas fa-gift text-xl mb-1"></i>
+                    <span class="text-center leading-tight">Redeem Points</span>
                 </a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="p-4 lg:p-6">
+    <main class="p-4 lg:p-6 flex-1">
         <div class="flex items-center space-x-2 mb-6">
             <i class="fas fa-chart-bar w-5 h-5 text-gray-600"></i>
             <h2 class="text-2xl font-bold text-gray-800">My Dashboard</h2>
@@ -272,53 +270,102 @@
         </div>
     </main>
 
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 lg:px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-store text-gray-300"></i>
+                    <span class="font-semibold text-lg" id="storeName">Sample Store</span>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-300">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-phone text-sm"></i>
+                        <span id="storePhone">055-123-4567</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-map-marker-alt text-sm"></i>
+                        <span id="storeAddress">123 Main Street, City</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-4 pt-4 text-center text-xs text-gray-400">
+                <p>&copy; 2025 <span id="storeNameFooter">Sample Store</span>. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <!-- Floating Help Button -->
-    <button onclick="showHelp()" class="fixed bottom-6 right-6 bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition-colors z-50">
+    <button onclick="toggleHelp()" class="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50">
         <span class="text-lg font-bold">?</span>
     </button>
 
     <!-- Help Modal -->
-    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg p-6 max-w-md mx-4">
-            <h3 class="text-lg font-semibold mb-4">Customer Roles & Features</h3>
+            <h3 class="text-lg font-semibold mb-4">Customer Portal Features</h3>
             <ul class="space-y-2 text-sm text-gray-700">
                 <li class="flex items-start">
-                    <span class="text-purple-600 mr-2">•</span>
+                    <span class="text-blue-600 mr-2">•</span>
                     View your current points balance and tier status
                 </li>
                 <li class="flex items-start">
-                    <span class="text-purple-600 mr-2">•</span>
-                    Track all your points activity history
+                    <span class="text-blue-600 mr-2">•</span>
+                    Track all your points activity and transaction history
                 </li>
                 <li class="flex items-start">
-                    <span class="text-purple-600 mr-2">•</span>
-                    Submit point redemption requests
+                    <span class="text-blue-600 mr-2">•</span>
+                    Request point redemptions for rewards
                 </li>
                 <li class="flex items-start">
-                    <span class="text-purple-600 mr-2">•</span>
-                    Access exclusive member benefits
+                    <span class="text-blue-600 mr-2">•</span>
+                    Monitor your progress towards next tier level
                 </li>
                 <li class="flex items-start">
-                    <span class="text-purple-600 mr-2">•</span>
-                    Receive special birthday rewards
+                    <span class="text-blue-600 mr-2">•</span>
+                    Access customer support and store information
                 </li>
             </ul>
-            <button onclick="closeHelp()" class="mt-4 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+            <button onclick="toggleHelp()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
                 Close
             </button>
         </div>
     </div>
 
     <script>
-        function showHelp() {
-            document.getElementById('helpModal').classList.remove('hidden');
-            document.getElementById('helpModal').classList.add('flex');
+        function toggleHelp() {
+            const modal = document.getElementById('helpModal');
+            modal.classList.toggle('hidden');
         }
 
-        function closeHelp() {
-            document.getElementById('helpModal').classList.add('hidden');
-            document.getElementById('helpModal').classList.remove('flex');
+        // Load store details from API
+        async function loadStoreDetails() {
+            try {
+                // This would connect to your Laravel API
+                // const response = await fetch('/api/store');
+                // const data = await response.json();
+                
+                // Mock data for development
+                const storeData = {
+                    name: 'Sample Store',
+                    phone: '055-123-4567',
+                    address: '123 Main Street, City'
+                };
+
+                document.getElementById('storeName').textContent = storeData.name;
+                document.getElementById('storePhone').textContent = storeData.phone;
+                document.getElementById('storeAddress').textContent = storeData.address;
+                document.getElementById('storeNameFooter').textContent = storeData.name;
+            } catch (error) {
+                console.error('Failed to load store details:', error);
+            }
         }
+
+        // Load store details on page load
+        window.addEventListener('load', loadStoreDetails);
     </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 
 import { Users, User, Award, Gift, Star, CreditCard, Settings as SettingsIcon, BarChart3, Minus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import Footer from "./Footer";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3">
@@ -123,9 +124,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       {/* Main Content */}
-      <main className="p-4 lg:p-6">
+      <main className="p-4 lg:p-6 flex-1">
         {children}
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
