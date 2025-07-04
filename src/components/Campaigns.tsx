@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Plus, Edit, Trash2 } from "lucide-react";
+import { campaignApi } from "../services/api";
 import EditCampaignModal from "./modals/EditCampaignModal";
 import DeleteCampaignModal from "./modals/DeleteCampaignModal";
 import AddCampaignModal from "./modals/AddCampaignModal";
@@ -21,19 +22,37 @@ const Campaigns = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
-    {
-      id: 1,
-      name: "Winter Golden Campaign",
-      description: "Earn double points during winter season",
-      startDate: "1/1/2024",
-      endDate: "3/31/2024",
-      earnRate: "2x points/$",
-      redeemRate: "$0.05/point",
-      status: "Expired"
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async () => {
+    try {
+      setLoading(true);
+      const response = await campaignApi.getAll();
+      setCampaigns(response.data.data);
+    } catch (error) {
+      console.error('Failed to fetch campaigns:', error);
+      // Fallback to mock data
+      setCampaigns([
+        {
+          id: 1,
+          name: "Winter Golden Campaign",
+          description: "Earn double points during winter season",
+          startDate: "1/1/2024",
+          endDate: "3/31/2024",
+          earnRate: "2x points/$",
+          redeemRate: "$0.05/point",
+          status: "Expired"
+        }
+      ]);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const handleEdit = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
@@ -45,28 +64,47 @@ const Campaigns = () => {
     setShowDeleteModal(true);
   };
 
-  const handleSaveCampaign = (updatedCampaign: Campaign) => {
-    setCampaigns(campaigns.map(c => c.id === updatedCampaign.id ? updatedCampaign : c));
-    setShowEditModal(false);
-    setSelectedCampaign(null);
-  };
-
-  const handleAddCampaign = (newCampaign: Omit<Campaign, 'id'>) => {
-    const campaign: Campaign = {
-      ...newCampaign,
-      id: Math.max(...campaigns.map(c => c.id), 0) + 1
-    };
-    setCampaigns([...campaigns, campaign]);
-    setShowAddModal(false);
-  };
-
-  const handleDeleteCampaign = () => {
-    if (selectedCampaign) {
-      setCampaigns(campaigns.filter(c => c.id !== selectedCampaign.id));
-      setShowDeleteModal(false);
+  const handleSaveCampaign = async (updatedCampaign: Campaign) => {
+    try {
+      await campaignApi.update(updatedCampaign.id, updatedCampaign);
+      setCampaigns(campaigns.map(c => c.id === updatedCampaign.id ? updatedCampaign : c));
+      setShowEditModal(false);
       setSelectedCampaign(null);
+    } catch (error) {
+      console.error('Failed to update campaign:', error);
     }
   };
+
+  const handleAddCampaign = async (newCampaign: Omit<Campaign, 'id'>) => {
+    try {
+      const response = await campaignApi.create(newCampaign);
+      setCampaigns([...campaigns, response.data.data]);
+      setShowAddModal(false);
+    } catch (error) {
+      console.error('Failed to create campaign:', error);
+    }
+  };
+
+  const handleDeleteCampaign = async () => {
+    if (selectedCampaign) {
+      try {
+        await campaignApi.delete(selectedCampaign.id);
+        setCampaigns(campaigns.filter(c => c.id !== selectedCampaign.id));
+        setShowDeleteModal(false);
+        setSelectedCampaign(null);
+      } catch (error) {
+        console.error('Failed to delete campaign:', error);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-gray-600">Loading campaigns...</div>
+      </div>
+    );
+  }
 
   return (
     <div>

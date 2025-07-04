@@ -34,6 +34,14 @@ export const storeApi = {
   updateStore: (data: any) => api.put('/store', data),
 };
 
+// Dashboard Analytics API
+export const analyticsApi = {
+  getDashboardStats: () => api.get('/analytics/dashboard'),
+  getChartData: () => api.get('/analytics/charts'),
+  getRecentActivity: () => api.get('/analytics/recent-activity'),
+  getActiveCampaigns: () => api.get('/analytics/active-campaigns'),
+};
+
 // Customers API
 export const customersApi = {
   getAll: (params?: any) => api.get('/customers', { params }),
@@ -49,6 +57,7 @@ export const pointsApi = {
   earn: (data: any) => api.post('/points/earn', data),
   redeem: (data: any) => api.post('/points/redeem', data),
   deduct: (data: any) => api.post('/points/deduct', data),
+  searchCustomer: (phone: string) => api.get(`/points/search-customer?phone=${phone}`),
 };
 
 // Campaigns API

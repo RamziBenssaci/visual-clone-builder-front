@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Users, Edit, Trash2, Search } from "lucide-react";
+import { customersApi } from "../services/api";
 import EditCustomerModal from "./modals/EditCustomerModal";
 import DeleteCustomerModal from "./modals/DeleteCustomerModal";
 
@@ -20,29 +21,95 @@ const Customers = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalCustomers: 0,
+    totalPoints: 0,
+    goldPlatinum: 0,
+    totalValue: "$0.00"
+  });
 
-  const [customers, setCustomers] = useState<Customer[]>([
-    {
-      id: 1,
-      name: "Ahmed Mohammed",
-      phone: "0551234567",
-      points: 2500,
-      tier: "Silver",
-      cashValue: "$125.00",
-      gender: "Male",
-      joined: "7/3/2025"
-    },
-    {
-      id: 2,
-      name: "Sarah Wilson",
-      phone: "0559876543",
-      points: 6000,
-      tier: "Gold",
-      cashValue: "$300.00",
-      gender: "Female",
-      joined: "7/3/2025"
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      handleSearch();
+    } else {
+      fetchCustomers();
     }
-  ]);
+  }, [searchTerm]);
+
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true);
+      const response = await customersApi.getAll();
+      setCustomers(response.data.data);
+      
+      // Calculate stats
+      const totalCustomers = response.data.data.length;
+      const totalPoints = response.data.data.reduce((sum: number, customer: Customer) => sum + customer.points, 0);
+      const goldPlatinum = response.data.data.filter((customer: Customer) => customer.tier === 'Gold' || customer.tier === 'Platinum').length;
+      const totalValue = (totalPoints * 0.05).toFixed(2); // Assuming 20:1 point to dollar ratio
+      
+      setStats({
+        totalCustomers,
+        totalPoints,
+        goldPlatinum,
+        totalValue: `$${totalValue}`
+      });
+    } catch (error) {
+      console.error('Failed to fetch customers:', error);
+      // Fallback to mock data
+      const mockCustomers = [
+        {
+          id: 1,
+          name: "Ahmed Mohammed",
+          phone: "0551234567",
+          points: 2500,
+          tier: "Silver",
+          cashValue: "$125.00",
+          gender: "Male",
+          joined: "7/3/2025"
+        },
+        {
+          id: 2,
+          name: "Sarah Wilson",
+          phone: "0559876543",
+          points: 6000,
+          tier: "Gold",
+          cashValue: "$300.00",
+          gender: "Female",
+          joined: "7/3/2025"
+        }
+      ];
+      setCustomers(mockCustomers);
+      setStats({
+        totalCustomers: 2,
+        totalPoints: 8500,
+        goldPlatinum: 1,
+        totalValue: "$425.00"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      fetchCustomers();
+      return;
+    }
+
+    try {
+      const response = await customersApi.search(searchTerm);
+      setCustomers(response.data.data);
+    } catch (error) {
+      console.error('Search failed:', error);
+    }
+  };
 
   const handleEdit = (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -54,17 +121,27 @@ const Customers = () => {
     setShowDeleteModal(true);
   };
 
-  const handleSaveCustomer = (updatedCustomer: Customer) => {
-    setCustomers(customers.map(c => c.id === updatedCustomer.id ? updatedCustomer : c));
-    setShowEditModal(false);
-    setSelectedCustomer(null);
+  const handleSaveCustomer = async (updatedCustomer: Customer) => {
+    try {
+      await customersApi.update(updatedCustomer.id, updatedCustomer);
+      setCustomers(customers.map(c => c.id === updatedCustomer.id ? updatedCustomer : c));
+      setShowEditModal(false);
+      setSelectedCustomer(null);
+    } catch (error) {
+      console.error('Failed to update customer:', error);
+    }
   };
 
-  const handleDeleteCustomer = () => {
+  const handleDeleteCustomer = async () => {
     if (selectedCustomer) {
-      setCustomers(customers.filter(c => c.id !== selectedCustomer.id));
-      setShowDeleteModal(false);
-      setSelectedCustomer(null);
+      try {
+        await customersApi.delete(selectedCustomer.id);
+        setCustomers(customers.filter(c => c.id !== selectedCustomer.id));
+        setShowDeleteModal(false);
+        setSelectedCustomer(null);
+      } catch (error) {
+        console.error('Failed to delete customer:', error);
+      }
     }
   };
 
@@ -72,6 +149,14 @@ const Customers = () => {
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.phone.includes(searchTerm)
   );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-gray-600">Loading customers...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -166,19 +251,19 @@ const Customers = () => {
         {/* Stats */}
         <div className="grid grid-cols-4 gap-6 mt-8 pt-6 border-t">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">2</div>
+            <div className="text-2xl font-bold text-blue-600">{stats.totalCustomers}</div>
             <div className="text-sm text-gray-600">Total Customers</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">8,500</div>
+            <div className="text-2xl font-bold text-green-600">{stats.totalPoints.toLocaleString()}</div>
             <div className="text-sm text-gray-600">Total Points</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">1</div>
+            <div className="text-2xl font-bold text-purple-600">{stats.goldPlatinum}</div>
             <div className="text-sm text-gray-600">Gold/Platinum</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">$425.00</div>
+            <div className="text-2xl font-bold text-orange-600">{stats.totalValue}</div>
             <div className="text-sm text-gray-600">Total Value</div>
           </div>
         </div>

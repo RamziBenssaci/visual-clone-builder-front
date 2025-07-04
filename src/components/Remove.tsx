@@ -4,6 +4,7 @@ import { Minus, Search, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { pointsApi } from "../services/api";
 
 const Remove = () => {
   const [searchPhone, setSearchPhone] = useState("");
@@ -11,37 +12,55 @@ const Remove = () => {
   const [refundAmount, setRefundAmount] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deductionComplete, setDeductionComplete] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSearchCustomer = () => {
-    if (searchPhone) {
-      // Mock customer data
-      setFoundCustomer({
-        name: "Ahmed Mohammed",
-        phone: searchPhone,
-        currentPoints: 1250,
-        lastTransaction: "$75.00",
-        transactionDate: "2024-01-15",
-        tier: "Gold"
-      });
+  const handleSearchCustomer = async () => {
+    if (!searchPhone.trim()) return;
+    
+    setIsSearching(true);
+    try {
+      const response = await pointsApi.searchCustomer(searchPhone);
+      setFoundCustomer(response.data.data);
+    } catch (error) {
+      console.error("Customer search failed:", error);
+      setFoundCustomer(null);
+    } finally {
+      setIsSearching(false);
     }
   };
 
   const handleDeductPoints = () => {
     if (refundAmount && foundCustomer) {
-      const pointsToDeduct = Math.floor(parseFloat(refundAmount) * 5); // 5 points per dollar
+      const pointsToDeduct = Math.floor(parseFloat(refundAmount) * 2); // 2 points per dollar
       setShowConfirmation(true);
     }
   };
 
-  const confirmDeduction = () => {
-    setDeductionComplete(true);
-    setShowConfirmation(false);
-    setTimeout(() => {
-      setDeductionComplete(false);
-      setFoundCustomer(null);
-      setSearchPhone("");
-      setRefundAmount("");
-    }, 3000);
+  const confirmDeduction = async () => {
+    setIsProcessing(true);
+    try {
+      const deductData = {
+        customerId: foundCustomer.id,
+        refundAmount: parseFloat(refundAmount),
+        reason: "Product return refund"
+      };
+
+      await pointsApi.deduct(deductData);
+      
+      setDeductionComplete(true);
+      setShowConfirmation(false);
+      setTimeout(() => {
+        setDeductionComplete(false);
+        setFoundCustomer(null);
+        setSearchPhone("");
+        setRefundAmount("");
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to deduct points:", error);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -74,9 +93,13 @@ const Remove = () => {
                   onChange={(e) => setSearchPhone(e.target.value)}
                   className="flex-1"
                 />
-                <Button onClick={handleSearchCustomer} className="w-full sm:w-auto">
+                <Button 
+                  onClick={handleSearchCustomer}
+                  disabled={isSearching || !searchPhone.trim()}
+                  className="w-full sm:w-auto"
+                >
                   <Search className="w-4 h-4 mr-2" />
-                  Search
+                  {isSearching ? 'Searching...' : 'Search'}
                 </Button>
               </div>
             </div>
@@ -94,9 +117,9 @@ const Remove = () => {
                   <p className="text-sm text-blue-700">Tier: {foundCustomer.tier}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-blue-700">Current Points: {foundCustomer.currentPoints}</p>
-                  <p className="text-sm text-blue-700">Last Transaction: {foundCustomer.lastTransaction}</p>
-                  <p className="text-sm text-blue-700">Date: {foundCustomer.transactionDate}</p>
+                  <p className="text-sm text-blue-700">Current Points: {foundCustomer.points}</p>
+                  <p className="text-sm text-blue-700">Cash Value: {foundCustomer.cashValue}</p>
+                  <p className="text-sm text-blue-700">Member Since: {foundCustomer.joined}</p>
                 </div>
               </div>
             </div>
@@ -115,7 +138,7 @@ const Remove = () => {
                 />
                 {refundAmount && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Points to deduct: {Math.floor(parseFloat(refundAmount) * 5)} points
+                    Points to deduct: {Math.floor(parseFloat(refundAmount) * 2)} points
                   </p>
                 )}
               </div>
@@ -142,13 +165,17 @@ const Remove = () => {
             <div className="space-y-2 mb-4">
               <p className="text-yellow-800">Customer: {foundCustomer.name}</p>
               <p className="text-yellow-800">Refund Amount: ${refundAmount}</p>
-              <p className="text-yellow-800">Points to Deduct: {Math.floor(parseFloat(refundAmount) * 5)} points</p>
-              <p className="text-yellow-800">Remaining Points: {foundCustomer.currentPoints - Math.floor(parseFloat(refundAmount) * 5)} points</p>
+              <p className="text-yellow-800">Points to Deduct: {Math.floor(parseFloat(refundAmount) * 2)} points</p>
+              <p className="text-yellow-800">Remaining Points: {foundCustomer.points - Math.floor(parseFloat(refundAmount) * 2)} points</p>
             </div>
             <div className="flex gap-2">
-              <Button onClick={confirmDeduction} className="bg-red-600 hover:bg-red-700">
+              <Button 
+                onClick={confirmDeduction} 
+                disabled={isProcessing}
+                className="bg-red-600 hover:bg-red-700"
+              >
                 <Check className="w-4 h-4 mr-2" />
-                Confirm Deduction
+                {isProcessing ? 'Processing...' : 'Confirm Deduction'}
               </Button>
               <Button variant="outline" onClick={() => setShowConfirmation(false)}>
                 <X className="w-4 h-4 mr-2" />

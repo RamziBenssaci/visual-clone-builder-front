@@ -2,91 +2,17 @@
 import { BarChart3, Users, Award, Gift, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { analyticsApi } from "../services/api";
 
 const Dashboard = () => {
   const [showHelp, setShowHelp] = useState(false);
-
-  const stats = [
-    {
-      title: "Total Customers",
-      value: "2",
-      change: "+12% from last month",
-      changeType: "positive",
-      icon: Users,
-      color: "bg-blue-500"
-    },
-    {
-      title: "Points Earned",
-      value: "250",
-      change: "+18% from last month",
-      changeType: "positive", 
-      icon: Award,
-      color: "bg-green-500"
-    },
-    {
-      title: "Points Redeemed",
-      value: "500",
-      change: "+8% from last month",
-      changeType: "positive",
-      icon: Gift,
-      color: "bg-purple-500"
-    },
-    {
-      title: "Total Sales",
-      value: "$500",
-      change: "+25% from last month",
-      changeType: "positive",
-      icon: TrendingUp,
-      color: "bg-orange-500"
-    }
-  ];
-
-  const tierData = [
-    { name: "Gold", value: 50, color: "#FFD700" },
-    { name: "Silver", value: 50, color: "#C0C0C0" },
-    { name: "Bronze", value: 0, color: "#CD7F32" }
-  ];
-
-  const monthlyData = [
-    { month: "Jan", earned: 2500, redeemed: 1200 },
-    { month: "Feb", earned: 1400, redeemed: 800 },
-    { month: "Mar", earned: 4000, redeemed: 1300 },
-    { month: "Apr", earned: 3800, redeemed: 1200 },
-    { month: "May", earned: 5000, redeemed: 1500 },
-    { month: "Jun", earned: 3500, redeemed: 1100 }
-  ];
-
-  const recentActivity = [
-    { 
-      id: 1, 
-      user: "Ahmed Mohammed", 
-      action: "Earned points", 
-      points: "+250 points", 
-      amount: "$500",
-      type: "earned",
-      icon: Award
-    },
-    { 
-      id: 2, 
-      user: "Sarah Wilson", 
-      action: "Redeemed points", 
-      points: "-500 points", 
-      amount: "$25",
-      type: "redeemed",
-      icon: Gift
-    }
-  ];
-
-  const activeCampaigns = [
-    {
-      id: 1,
-      title: "Winter Golden Campaign",
-      description: "Earn double points during winter season",
-      earnRate: "2x",
-      endDate: "Until 3/31/2024"
-    }
-  ];
+  const [stats, setStats] = useState([]);
+  const [tierData, setTierData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [activeCampaigns, setActiveCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const adminRoles = [
     "View all customer data and analytics",
@@ -96,6 +22,123 @@ const Dashboard = () => {
     "Generate reports and view transaction history",
     "Configure system settings and parameters"
   ];
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch all dashboard data
+      const [statsRes, chartRes, activityRes, campaignsRes] = await Promise.all([
+        analyticsApi.getDashboardStats(),
+        analyticsApi.getChartData(),
+        analyticsApi.getRecentActivity(),
+        analyticsApi.getActiveCampaigns()
+      ]);
+
+      setStats(statsRes.data.data.stats);
+      setTierData(chartRes.data.data.tierDistribution);
+      setMonthlyData(chartRes.data.data.monthlyActivity);
+      setRecentActivity(activityRes.data.data);
+      setActiveCampaigns(campaignsRes.data.data);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+      // Fallback to mock data for development
+      setStats([
+        {
+          title: "Total Customers",
+          value: "2",
+          change: "+12% from last month",
+          changeType: "positive",
+          icon: Users,
+          color: "bg-blue-500"
+        },
+        {
+          title: "Points Earned",
+          value: "250",
+          change: "+18% from last month",
+          changeType: "positive", 
+          icon: Award,
+          color: "bg-green-500"
+        },
+        {
+          title: "Points Redeemed",
+          value: "500",
+          change: "+8% from last month",
+          changeType: "positive",
+          icon: Gift,
+          color: "bg-purple-500"
+        },
+        {
+          title: "Total Sales",
+          value: "$500",
+          change: "+25% from last month",
+          changeType: "positive",
+          icon: TrendingUp,
+          color: "bg-orange-500"
+        }
+      ]);
+
+      setTierData([
+        { name: "Gold", value: 50, color: "#FFD700" },
+        { name: "Silver", value: 50, color: "#C0C0C0" },
+        { name: "Bronze", value: 0, color: "#CD7F32" }
+      ]);
+
+      setMonthlyData([
+        { month: "Jan", earned: 2500, redeemed: 1200 },
+        { month: "Feb", earned: 1400, redeemed: 800 },
+        { month: "Mar", earned: 4000, redeemed: 1300 },
+        { month: "Apr", earned: 3800, redeemed: 1200 },
+        { month: "May", earned: 5000, redeemed: 1500 },
+        { month: "Jun", earned: 3500, redeemed: 1100 }
+      ]);
+
+      setRecentActivity([
+        { 
+          id: 1, 
+          user: "Ahmed Mohammed", 
+          action: "Earned points", 
+          points: "+250 points", 
+          amount: "$500",
+          type: "earned",
+          icon: Award
+        },
+        { 
+          id: 2, 
+          user: "Sarah Wilson", 
+          action: "Redeemed points", 
+          points: "-500 points", 
+          amount: "$25",
+          type: "redeemed",
+          icon: Gift
+        }
+      ]);
+
+      setActiveCampaigns([
+        {
+          id: 1,
+          title: "Winter Golden Campaign",
+          description: "Earn double points during winter season",
+          earnRate: "2x",
+          endDate: "Until 3/31/2024"
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-gray-600">Loading dashboard...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -107,7 +150,7 @@ const Dashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
         {stats.map((stat, index) => {
-          const Icon = stat.icon;
+          const Icon = stat.icon || Users;
           return (
             <div key={index} className="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
               <div className="flex items-center justify-between">
@@ -210,7 +253,7 @@ const Dashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {recentActivity.map((activity) => {
-                const Icon = activity.icon;
+                const Icon = activity.icon || Award;
                 return (
                   <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center space-x-3">

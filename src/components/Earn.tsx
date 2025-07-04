@@ -1,12 +1,65 @@
 
 import { useState } from "react";
-import { Award, Search, Users } from "lucide-react";
+import { Award, Search, Users, Check, X } from "lucide-react";
+import { pointsApi } from "../services/api";
 
 const Earn = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [foundCustomer, setFoundCustomer] = useState(null);
+  const [purchaseAmount, setPurchaseAmount] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSearch = () => {
-    console.log("Searching for customer:", phoneNumber);
+  const handleSearch = async () => {
+    if (!phoneNumber.trim()) return;
+    
+    setIsSearching(true);
+    try {
+      const response = await pointsApi.searchCustomer(phoneNumber);
+      setFoundCustomer(response.data.data);
+    } catch (error) {
+      console.error("Customer search failed:", error);
+      setFoundCustomer(null);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleEarnPoints = async () => {
+    if (!foundCustomer || !purchaseAmount) return;
+
+    setIsProcessing(true);
+    try {
+      const pointsToEarn = Math.floor(parseFloat(purchaseAmount) * 2); // 2 points per dollar
+      
+      const earnData = {
+        customerId: foundCustomer.id,
+        points: pointsToEarn,
+        amount: parseFloat(purchaseAmount),
+        description: "Purchase reward"
+      };
+
+      await pointsApi.earn(earnData);
+      
+      // Update customer points locally
+      setFoundCustomer({
+        ...foundCustomer,
+        points: foundCustomer.points + pointsToEarn
+      });
+
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        setFoundCustomer(null);
+        setPhoneNumber("");
+        setPurchaseAmount("");
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to earn points:", error);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -24,31 +77,104 @@ const Earn = () => {
         </div>
       </div>
 
-      {/* Search Form */}
+      {/* Search and Earn Form */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
-        <div className="max-w-md mx-auto lg:mx-0">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Customer Phone Number
-            </label>
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-              <input
-                type="tel"
-                placeholder="05xxxxxxxx"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <button
-                onClick={handleSearch}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
-              >
-                <Search className="w-4 h-4" />
-                <span>Search</span>
-              </button>
+        {!foundCustomer && !showSuccess && (
+          <div className="max-w-md mx-auto lg:mx-0">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Customer Phone Number
+              </label>
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                <input
+                  type="tel"
+                  placeholder="05xxxxxxxx"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  onClick={handleSearch}
+                  disabled={isSearching || !phoneNumber.trim()}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50"
+                >
+                  <Search className="w-4 h-4" />
+                  <span>{isSearching ? 'Searching...' : 'Search'}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {foundCustomer && !showSuccess && (
+          <div className="space-y-6 max-w-2xl mx-auto lg:mx-0">
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h3 className="font-semibold text-green-900 mb-2">Customer Found</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-green-700">Name: {foundCustomer.name}</p>
+                  <p className="text-sm text-green-700">Phone: {foundCustomer.phone}</p>
+                  <p className="text-sm text-green-700">Tier: {foundCustomer.tier}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-green-700">Current Points: {foundCustomer.points.toLocaleString()}</p>
+                  <p className="text-sm text-green-700">Cash Value: {foundCustomer.cashValue}</p>
+                  <p className="text-sm text-green-700">Member Since: {foundCustomer.joined}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Purchase Amount ($)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter purchase amount"
+                  value={purchaseAmount}
+                  onChange={(e) => setPurchaseAmount(e.target.value)}
+                  className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                {purchaseAmount && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    Points to earn: {Math.floor(parseFloat(purchaseAmount) * 2)} points
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleEarnPoints}
+                  disabled={isProcessing || !purchaseAmount}
+                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                >
+                  {isProcessing ? 'Processing...' : 'Add Points'}
+                </button>
+                <button
+                  onClick={() => setFoundCustomer(null)}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showSuccess && (
+          <div className="bg-green-50 p-6 rounded-lg border border-green-200 max-w-2xl mx-auto lg:mx-0">
+            <div className="flex items-center gap-3">
+              <div className="bg-green-100 p-2 rounded-full">
+                <Check className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-green-900">Points Added Successfully!</h3>
+                <p className="text-green-800">The customer has earned {Math.floor(parseFloat(purchaseAmount) * 2)} points.</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

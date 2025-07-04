@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User } from "lucide-react";
+import { customersApi } from "../services/api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -10,21 +11,59 @@ const Register = () => {
     pinCode: "",
   });
 
-  const [recentCustomers] = useState([
-    { name: "Sarah Wilson", phone: "0559876543", tier: "Gold", points: 6000 },
-    { name: "Ahmed Mohammed", phone: "0551234567", tier: "Silver", points: 2500 }
-  ]);
+  const [recentCustomers, setRecentCustomers] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchRecentCustomers();
+  }, []);
+
+  const fetchRecentCustomers = async () => {
+    try {
+      const response = await customersApi.getAll({ limit: 5, sort: 'recent' });
+      setRecentCustomers(response.data.data.slice(0, 2));
+    } catch (error) {
+      console.error('Failed to fetch recent customers:', error);
+      // Fallback to mock data
+      setRecentCustomers([
+        { name: "Sarah Wilson", phone: "0559876543", tier: "Gold", points: 6000 },
+        { name: "Ahmed Mohammed", phone: "0551234567", tier: "Silver", points: 2500 }
+      ]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Registering customer:", formData);
-    // Reset form
-    setFormData({
-      fullName: "",
-      phoneNumber: "",
-      gender: "",
-      pinCode: "",
-    });
+    setIsSubmitting(true);
+
+    try {
+      const customerData = {
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
+        email: "", // Optional field
+        gender: formData.gender,
+        pinCode: formData.pinCode
+      };
+
+      await customersApi.create(customerData);
+      
+      // Reset form
+      setFormData({
+        fullName: "",
+        phoneNumber: "",
+        gender: "",
+        pinCode: "",
+      });
+
+      // Refresh recent customers list
+      fetchRecentCustomers();
+      
+      console.log("Customer registered successfully!");
+    } catch (error) {
+      console.error("Failed to register customer:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -113,10 +152,11 @@ const Register = () => {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                disabled={isSubmitting}
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <User className="w-4 h-4" />
-                <span>Register Customer</span>
+                <span>{isSubmitting ? 'Registering...' : 'Register Customer'}</span>
               </button>
             </div>
           </form>

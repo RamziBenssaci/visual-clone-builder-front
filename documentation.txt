@@ -1,0 +1,872 @@
+
+# LOYALTY PROGRAM API DOCUMENTATION FOR LARAVEL BACKEND
+# Complete API Specification for React Frontend Integration
+
+## BASE CONFIGURATION
+- Base URL: http://localhost:8000/api
+- Authentication: Bearer Token (stored in localStorage as 'admin_token')
+- Content-Type: application/json
+- Accept: application/json
+
+## AUTHENTICATION HEADERS
+All authenticated requests must include:
+Authorization: Bearer {token}
+Content-Type: application/json
+Accept: application/json
+
+===============================================================================
+## 1. STORE DETAILS API
+===============================================================================
+
+### GET /api/store
+Description: Retrieve store information for footer display
+Authentication: Required (Admin)
+Parameters: None
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "name": "Sample Store",
+    "phone": "055-123-4567", 
+    "address": "123 Main Street, City"
+  }
+}
+
+### PUT /api/store
+Description: Update store information
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "name": "My Store Name",
+  "phone": "055-123-4567",
+  "address": "Complete store address"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Store details updated successfully",
+  "data": {
+    "name": "My Store Name",
+    "phone": "055-123-4567", 
+    "address": "Complete store address"
+  }
+}
+
+===============================================================================
+## 2. DASHBOARD ANALYTICS API
+===============================================================================
+
+### GET /api/analytics/dashboard
+Description: Get main dashboard statistics
+Authentication: Required (Admin)
+Parameters: None
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "stats": [
+      {
+        "title": "Total Customers",
+        "value": "152",
+        "change": "+12% from last month",
+        "changeType": "positive"
+      },
+      {
+        "title": "Points Earned", 
+        "value": "25,420",
+        "change": "+18% from last month",
+        "changeType": "positive"
+      },
+      {
+        "title": "Points Redeemed",
+        "value": "18,500", 
+        "change": "+8% from last month",
+        "changeType": "positive"
+      },
+      {
+        "title": "Total Sales",
+        "value": "$12,750",
+        "change": "+25% from last month", 
+        "changeType": "positive"
+      }
+    ]
+  }
+}
+
+### GET /api/analytics/charts
+Description: Get chart data for dashboard
+Authentication: Required (Admin)
+Parameters: None
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "tierDistribution": [
+      { "name": "Gold", "value": 30, "color": "#FFD700" },
+      { "name": "Silver", "value": 45, "color": "#C0C0C0" },
+      { "name": "Bronze", "value": 25, "color": "#CD7F32" }
+    ],
+    "monthlyActivity": [
+      { "month": "Jan", "earned": 2500, "redeemed": 1200 },
+      { "month": "Feb", "earned": 1400, "redeemed": 800 },
+      { "month": "Mar", "earned": 4000, "redeemed": 1300 },
+      { "month": "Apr", "earned": 3800, "redeemed": 1200 },
+      { "month": "May", "earned": 5000, "redeemed": 1500 },
+      { "month": "Jun", "earned": 3500, "redeemed": 1100 }
+    ]
+  }
+}
+
+### GET /api/analytics/recent-activity
+Description: Get recent customer activity
+Authentication: Required (Admin)
+Parameters: None
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "user": "Ahmed Mohammed",
+      "action": "Earned points",
+      "points": "+250 points",
+      "amount": "$500",
+      "type": "earned",
+      "date": "2025-01-15T10:30:00Z"
+    },
+    {
+      "id": 2, 
+      "user": "Sarah Wilson",
+      "action": "Redeemed points",
+      "points": "-500 points",
+      "amount": "$25",
+      "type": "redeemed",
+      "date": "2025-01-15T09:15:00Z"
+    }
+  ]
+}
+
+### GET /api/analytics/active-campaigns
+Description: Get active campaigns for dashboard
+Authentication: Required (Admin)
+Parameters: None
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "title": "Winter Golden Campaign",
+      "description": "Earn double points during winter season",
+      "earnRate": "2x",
+      "endDate": "Until 3/31/2024"
+    }
+  ]
+}
+
+===============================================================================
+## 3. CUSTOMERS API
+===============================================================================
+
+### GET /api/customers
+Description: Get paginated list of customers
+Authentication: Required (Admin)
+
+Query Parameters:
+- page (optional): Page number (default: 1)
+- per_page (optional): Items per page (default: 10)
+- search (optional): Search term for name/phone
+- limit (optional): For recent customers
+- sort (optional): 'recent' for recently registered
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "phone": "0551234567",
+      "email": "ahmed@example.com",
+      "gender": "Male",
+      "points": 2500,
+      "tier": "Silver",
+      "cashValue": "$125.00",
+      "joined": "2025-01-15T10:30:00Z"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 5,
+    "total_items": 50,
+    "per_page": 10
+  }
+}
+
+### GET /api/customers/{id}
+Description: Get specific customer details
+Authentication: Required (Admin)
+Parameters: Customer ID in URL
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Ahmed Mohammed",
+    "phone": "0551234567",
+    "email": "ahmed@example.com",
+    "gender": "Male",
+    "points": 2500,
+    "tier": "Silver",
+    "cashValue": "$125.00",
+    "joined": "2025-01-15T10:30:00Z",
+    "transactions": [
+      {
+        "id": 1,
+        "type": "earned",
+        "points": 250,
+        "amount": "$500",
+        "date": "2025-01-15T10:30:00Z",
+        "description": "Purchase reward"
+      }
+    ]
+  }
+}
+
+### POST /api/customers
+Description: Register new customer
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "fullName": "Ahmed Mohammed",
+  "phoneNumber": "0551234567",
+  "email": "ahmed@example.com",
+  "gender": "Male",
+  "pinCode": "1234"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Customer registered successfully",
+  "data": {
+    "id": 1,
+    "name": "Ahmed Mohammed",
+    "phone": "0551234567",
+    "email": "ahmed@example.com",
+    "tier": "Bronze",
+    "points": 0
+  }
+}
+
+### PUT /api/customers/{id}
+Description: Update customer information
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "name": "Ahmed Mohammed Updated",
+  "phone": "0551234567",
+  "email": "ahmed.updated@example.com",
+  "gender": "Male"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Customer updated successfully",
+  "data": {
+    "id": 1,
+    "name": "Ahmed Mohammed Updated",
+    "phone": "0551234567",
+    "email": "ahmed.updated@example.com",
+    "points": 2500,
+    "tier": "Silver"
+  }
+}
+
+### DELETE /api/customers/{id}
+Description: Delete customer
+Authentication: Required (Admin)
+Parameters: Customer ID in URL
+
+Response Format:
+{
+  "success": true,
+  "message": "Customer deleted successfully"
+}
+
+### GET /api/customers/search?q={query}
+Description: Search customers by name or phone
+Authentication: Required (Admin)
+
+Query Parameters:
+- q: Search query (required)
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "phone": "0551234567",
+      "points": 2500,
+      "tier": "Silver"
+    }
+  ]
+}
+
+===============================================================================
+## 4. POINTS MANAGEMENT API
+===============================================================================
+
+### GET /api/points/search-customer?phone={phone}
+Description: Search customer by phone for point operations
+Authentication: Required (Admin)
+
+Query Parameters:
+- phone: Customer phone number (required)
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Ahmed Mohammed",
+    "phone": "0551234567",
+    "points": 2500,
+    "tier": "Silver",
+    "cashValue": "$125.00",
+    "joined": "2025-01-15T10:30:00Z"
+  }
+}
+
+### POST /api/points/earn
+Description: Add points to customer account
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "customerId": 1,
+  "points": 250,
+  "amount": 500.00,
+  "description": "Purchase reward"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Points added successfully",
+  "data": {
+    "transaction": {
+      "id": 123,
+      "customerId": 1,
+      "type": "earned",
+      "points": 250,
+      "amount": "$500.00",
+      "date": "2025-01-15T10:30:00Z"
+    },
+    "customer": {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "totalPoints": 2750,
+      "tier": "Silver"
+    }
+  }
+}
+
+### POST /api/points/redeem
+Description: Deduct points from customer account for redemption
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "customerId": 1,
+  "points": 500,
+  "cashValue": 25.00,
+  "description": "Cash redemption"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Points redeemed successfully",
+  "data": {
+    "transaction": {
+      "id": 124,
+      "customerId": 1,
+      "type": "redeemed",
+      "points": -500,
+      "amount": "$25.00",
+      "date": "2025-01-15T10:30:00Z"
+    },
+    "customer": {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "totalPoints": 2250,
+      "tier": "Silver"
+    }
+  }
+}
+
+### POST /api/points/deduct
+Description: Remove points due to refund
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "customerId": 1,
+  "refundAmount": 100.00,
+  "reason": "Product return refund"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Points deducted successfully",
+  "data": {
+    "pointsDeducted": 200,
+    "transaction": {
+      "id": 125,
+      "customerId": 1,
+      "type": "deducted",
+      "points": -200,
+      "amount": "$100.00",
+      "date": "2025-01-15T10:30:00Z",
+      "reason": "Product return refund"
+    },
+    "customer": {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "totalPoints": 2050,
+      "tier": "Silver"
+    }
+  }
+}
+
+===============================================================================
+## 5. CAMPAIGNS API
+===============================================================================
+
+### GET /api/campaigns
+Description: Get all loyalty campaigns
+Authentication: Required (Admin)
+Parameters: None
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Winter Golden Campaign",
+      "description": "Earn double points during winter season",
+      "startDate": "2025-01-01",
+      "endDate": "2025-03-31",
+      "earnRate": "2x points/$",
+      "redeemRate": "$0.05/point",
+      "status": "Active"
+    }
+  ]
+}
+
+### POST /api/campaigns
+Description: Create new campaign
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "name": "Spring Bonus Campaign",
+  "description": "Extra points for spring purchases",
+  "startDate": "2025-04-01",
+  "endDate": "2025-06-30",
+  "earnRate": "1.5x points/$",
+  "redeemRate": "$0.04/point"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Campaign created successfully",
+  "data": {
+    "id": 2,
+    "name": "Spring Bonus Campaign",
+    "description": "Extra points for spring purchases",
+    "startDate": "2025-04-01",
+    "endDate": "2025-06-30",
+    "earnRate": "1.5x points/$",
+    "redeemRate": "$0.04/point",
+    "status": "Active"
+  }
+}
+
+### PUT /api/campaigns/{id}
+Description: Update campaign details
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "name": "Updated Campaign Name",
+  "description": "Updated description",
+  "startDate": "2025-04-01",
+  "endDate": "2025-06-30",
+  "earnRate": "2x points/$",
+  "redeemRate": "$0.05/point"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Campaign updated successfully",
+  "data": {
+    "id": 1,
+    "name": "Updated Campaign Name",
+    "description": "Updated description",
+    "startDate": "2025-04-01",
+    "endDate": "2025-06-30",
+    "earnRate": "2x points/$",
+    "redeemRate": "$0.05/point",
+    "status": "Active"
+  }
+}
+
+### DELETE /api/campaigns/{id}
+Description: Delete campaign
+Authentication: Required (Admin)
+Parameters: Campaign ID in URL
+
+Response Format:
+{
+  "success": true,
+  "message": "Campaign deleted successfully"
+}
+
+===============================================================================
+## 6. TRANSACTIONS API
+===============================================================================
+
+### GET /api/transactions
+Description: Get all transactions with filters
+Authentication: Required (Admin)
+
+Query Parameters:
+- page (optional): Page number
+- per_page (optional): Items per page
+- type (optional): 'earned', 'redeemed', 'deducted'
+- customer_id (optional): Filter by customer
+- date_from (optional): Start date filter
+- date_to (optional): End date filter
+- search (optional): Search by customer name
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "customerName": "Ahmed Mohammed",
+      "type": "earned",
+      "points": 250,
+      "amount": "$500",
+      "date": "2025-01-15T10:30:00Z",
+      "description": "Purchase reward"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 10,
+    "total_items": 100
+  }
+}
+
+### DELETE /api/transactions/{id}
+Description: Delete transaction record
+Authentication: Required (Admin)
+Parameters: Transaction ID in URL
+
+Response Format:
+{
+  "success": true,
+  "message": "Transaction deleted successfully"
+}
+
+===============================================================================
+## 7. ADMIN AUTHENTICATION API 
+===============================================================================
+
+### POST /api/admin/login
+Description: Authenticate admin user
+Authentication: Not Required
+
+Request Format:
+{
+  "username": "admin",
+  "password": "password123"
+}
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "user": {
+      "id": 1,
+      "username": "admin",
+      "lastLogin": "2025-01-15T10:30:00Z"
+    }
+  }
+}
+
+### PUT /api/admin/credentials
+Description: Update admin username and/or password
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "newUsername": "newadmin",
+  "currentPassword": "currentpass",
+  "newPassword": "newpass123",
+  "confirmPassword": "newpass123"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Credentials updated successfully"
+}
+
+### GET /api/admin/users
+Description: Get list of all admin users
+Authentication: Required (Admin)
+
+Response Format:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "username": "admin",
+      "lastLogin": "2025-01-15T10:30:00Z",
+      "status": "active"
+    }
+  ]
+}
+
+### POST /api/admin/users
+Description: Create new admin user
+Authentication: Required (Admin)
+
+Request Format:
+{
+  "username": "newadmin",
+  "password": "password123"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Admin user created successfully",
+  "data": {
+    "id": 3,
+    "username": "newadmin",
+    "status": "active"
+  }
+}
+
+### DELETE /api/admin/users/{id}
+Description: Delete admin user
+Authentication: Required (Admin)
+Parameters: Admin user ID in URL
+
+Response Format:
+{
+  "success": true,
+  "message": "Admin user deleted successfully"
+}
+
+===============================================================================
+## 8. CUSTOMER PORTAL API
+===============================================================================
+
+### POST /api/customer/register
+Description: Self-registration for customers
+Authentication: Not Required
+
+Request Format:
+{
+  "fullName": "Ahmed Mohammed",
+  "phoneNumber": "0551234567",
+  "email": "ahmed@example.com",
+  "gender": "Male",
+  "pinCode": "1234",
+  "confirmPin": "1234"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Registration successful",
+  "data": {
+    "id": 1,
+    "name": "Ahmed Mohammed",
+    "phone": "0551234567",
+    "email": "ahmed@example.com",
+    "tier": "Bronze",
+    "points": 0
+  }
+}
+
+### POST /api/customer/login
+Description: Customer authentication
+Authentication: Not Required
+
+Request Format:
+{
+  "phoneNumber": "0551234567",
+  "pinCode": "1234"
+}
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "customer": {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "phone": "0551234567",
+      "email": "ahmed@example.com",
+      "points": 2500,
+      "tier": "Silver",
+      "cashValue": "$125.00"
+    }
+  }
+}
+
+### GET /api/customer/profile
+Description: Get customer profile and transaction history
+Authentication: Required (Customer Token)
+
+Response Format:
+{
+  "success": true,
+  "data": {
+    "customer": {
+      "id": 1,
+      "name": "Ahmed Mohammed",
+      "phone": "0551234567",
+      "email": "ahmed@example.com",
+      "points": 2500,
+      "tier": "Silver",
+      "cashValue": "$125.00",
+      "joined": "2025-01-15T10:30:00Z"
+    },
+    "transactions": [
+      {
+        "id": 1,
+        "type": "earned",
+        "points": 250,
+        "amount": "$500",
+        "date": "2025-01-15T10:30:00Z",
+        "description": "Purchase reward"
+      }
+    ]
+  }
+}
+
+### POST /api/customer/redeem-request
+Description: Submit redemption request
+Authentication: Required (Customer Token)
+
+Request Format:
+{
+  "points": 1000,
+  "redemptionMethod": "cash"
+}
+
+Response Format:
+{
+  "success": true,
+  "message": "Redemption request submitted successfully",
+  "data": {
+    "requestId": 123,
+    "points": 1000,
+    "cashValue": "$50.00",
+    "status": "pending",
+    "submittedAt": "2025-01-15T10:30:00Z"
+  }
+}
+
+===============================================================================
+## ERROR RESPONSE FORMAT
+===============================================================================
+
+All API endpoints should return consistent error responses:
+
+{
+  "success": false,
+  "message": "Error description",
+  "errors": {
+    "field_name": ["Validation error message"]
+  }
+}
+
+Common HTTP Status Codes:
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 422: Validation Error
+- 500: Internal Server Error
+
+===============================================================================
+## FRONTEND IMPLEMENTATION NOTES
+===============================================================================
+
+1. BASE API URL: Configure in environment variable REACT_APP_API_URL
+2. TOKEN STORAGE: Admin tokens stored in localStorage as 'admin_token'
+3. CUSTOMER TOKENS: Stored in localStorage as 'customer_token'
+4. REAL-TIME UPDATES: All forms update UI immediately after successful API calls
+5. ERROR HANDLING: Console logging implemented, toast notifications can be added
+6. LOADING STATES: Loading indicators shown during API calls
+7. OFFLINE FALLBACK: Mock data provided for development when API unavailable
+
+===============================================================================
+## BUSINESS LOGIC CALCULATIONS
+===============================================================================
+
+Points System:
+- Earning: 2 points per $1 spent
+- Redemption: 20 points = $1 (0.05 cents per point)
+- Deduction: Points removed based on refund amount (2 points per $1 refunded)
+
+Tier System:
+- Bronze: 0-999 points
+- Silver: 1000-4999 points  
+- Gold: 5000+ points
+
+===============================================================================
+## SECURITY CONSIDERATIONS
+===============================================================================
+
+1. CORS: Configure Laravel to accept requests from frontend domain
+2. RATE LIMITING: Implement rate limiting on sensitive endpoints
+3. INPUT VALIDATION: Validate all input data on Laravel backend
+4. TOKEN EXPIRATION: Implement token refresh mechanism
+5. HTTPS: Use HTTPS in production
+6. SQL INJECTION: Use Laravel's Eloquent ORM to prevent SQL injection
+
+This documentation provides a complete blueprint for connecting the React frontend with Laravel backend. All endpoints are structured to provide consistent responses and handle real-time updates efficiently.
