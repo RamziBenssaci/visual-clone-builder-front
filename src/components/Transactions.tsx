@@ -99,7 +99,7 @@ const Transactions = () => {
     }
 
     try {
-      const params = { search: searchTerm };
+      const params: any = { search: searchTerm };
       if (filter === "Points Earned") params.type = 'earned';
       if (filter === "Points Redeemed") params.type = 'redeemed';
       
