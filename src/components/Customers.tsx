@@ -145,10 +145,11 @@ const Customers = () => {
     }
   };
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.phone.includes(searchTerm)
-  );
+const filteredCustomers = customers.filter((customer) => {
+  const nameMatch = customer?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+  const phoneMatch = customer?.phone?.includes(searchTerm);
+  return nameMatch || phoneMatch;
+});
 
   if (loading) {
     return (
