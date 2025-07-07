@@ -211,5 +211,25 @@
             </div>
         </div>
     </main>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Remove duplicate headers
+    const headers = document.querySelectorAll("header");
+    if (headers.length > 1) {
+      for (let i = 1; i < headers.length; i++) {
+        headers[i].remove();
+      }
+    }
+
+    // Remove duplicate footers
+    const footers = document.querySelectorAll("footer");
+    if (footers.length > 1) {
+      for (let i = 1; i < footers.length; i++) {
+        footers[i].remove();
+      }
+    }
+  });
+</script>
+
 </body>
 </html>
