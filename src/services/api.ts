@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Base API configuration
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000/api',
+  baseURL: process.env.REACT_APP_API_URL || 'https://6dac-154-121-76-115.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
