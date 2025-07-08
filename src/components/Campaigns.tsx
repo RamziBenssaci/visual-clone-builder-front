@@ -65,6 +65,8 @@ const Campaigns = () => {
   };
 
   const handleSaveCampaign = async (updatedCampaign: Campaign) => {
+      console.log("Sending to API:", updatedCampaign); // Add this
+
     try {
       await campaignApi.update(updatedCampaign.id, updatedCampaign);
       setCampaigns(campaigns.map(c => c.id === updatedCampaign.id ? updatedCampaign : c));
