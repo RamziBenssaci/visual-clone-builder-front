@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { StoreProvider } from "./contexts/StoreContext";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
-
+import Dashboard from "./components/Dashboard"; // or "./pages/Dashboard" depending on where it is
 import NotFound from "./pages/NotFound";
 import Customers from "./components/Customers";
 import Register from "./components/Register";
