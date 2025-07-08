@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -29,7 +30,7 @@ const App = () => (
         <BrowserRouter>
           <Layout>
             <Routes>
-<Route path="/" element={<Dashboard />} />
+<Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/customers" element={<Customers />} />
               <Route path="/register" element={<Register />} />
               <Route path="/earn" element={<Earn />} />
