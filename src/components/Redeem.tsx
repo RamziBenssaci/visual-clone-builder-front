@@ -9,9 +9,30 @@ const Redeem = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [cashValue, setCashValue] = useState(null);
+
+  useEffect(() => {
+    const fetchCashValue = async () => {
+      if (!redeemPoints || isNaN(redeemPoints) || parseInt(redeemPoints) <= 0) {
+        setCashValue(null);
+        return;
+      }
+
+      try {
+        const response = await pointsApi.redeemPreview({ points: parseInt(redeemPoints) });
+        setCashValue(response.data.data.cashValue);
+      } catch (error) {
+        console.error("Failed to fetch redeem preview:", error);
+        setCashValue(null);
+      }
+    };
+
+    fetchCashValue();
+  }, [redeemPoints]);
 
   const handleSearch = async () => {
     if (!phoneNumber.trim()) return;
+
     setIsSearching(true);
     try {
       const response = await pointsApi.searchCustomer(phoneNumber);
@@ -25,7 +46,7 @@ const Redeem = () => {
   };
 
   const handleRedeemPoints = async () => {
-    if (!foundCustomer || !redeemPoints) return;
+    if (!foundCustomer || !redeemPoints || !cashValue) return;
 
     const pointsToRedeem = parseInt(redeemPoints);
     if (pointsToRedeem > foundCustomer.points) {
@@ -35,21 +56,18 @@ const Redeem = () => {
 
     setIsProcessing(true);
     try {
-      const res = await pointsApi.redeemPreview(pointsToRedeem);
-      const cashValue = res.data.data.cashValue;
-
       const redeemData = {
         customerId: foundCustomer.id,
         points: pointsToRedeem,
         cashValue: cashValue,
-        description: "Cash redemption",
+        description: "Cash redemption"
       };
 
       await pointsApi.redeem(redeemData);
 
       setFoundCustomer({
         ...foundCustomer,
-        points: foundCustomer.points - pointsToRedeem,
+        points: foundCustomer.points - pointsToRedeem
       });
 
       setShowSuccess(true);
@@ -58,6 +76,7 @@ const Redeem = () => {
         setFoundCustomer(null);
         setPhoneNumber("");
         setRedeemPoints("");
+        setCashValue(null);
       }, 3000);
     } catch (error) {
       console.error("Failed to redeem points:", error);
@@ -83,27 +102,25 @@ const Redeem = () => {
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         {!foundCustomer && !showSuccess && (
           <div className="max-w-md mx-auto lg:mx-0">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Phone Number
-              </label>
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <input
-                  type="tel"
-                  placeholder="05xxxxxxxx"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  onClick={handleSearch}
-                  disabled={isSearching || !phoneNumber.trim()}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50"
-                >
-                  <Search className="w-4 h-4" />
-                  <span>{isSearching ? "Searching..." : "Search"}</span>
-                </button>
-              </div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Customer Phone Number
+            </label>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <input
+                type="tel"
+                placeholder="05xxxxxxxx"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                onClick={handleSearch}
+                disabled={isSearching || !phoneNumber.trim()}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50"
+              >
+                <Search className="w-4 h-4" />
+                <span>{isSearching ? "Searching..." : "Search"}</span>
+              </button>
             </div>
           </div>
         )}
@@ -119,7 +136,9 @@ const Redeem = () => {
                   <p className="text-sm text-blue-700">Tier: {foundCustomer.tier}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-blue-700">Available Points: {foundCustomer.points.toLocaleString()}</p>
+                  <p className="text-sm text-blue-700">
+                    Available Points: {foundCustomer.points.toLocaleString()}
+                  </p>
                   <p className="text-sm text-blue-700">Cash Value: {foundCustomer.cashValue}</p>
                   <p className="text-sm text-blue-700">Member Since: {foundCustomer.joined}</p>
                 </div>
@@ -127,32 +146,35 @@ const Redeem = () => {
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Points to Redeem
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter points to redeem"
-                  value={redeemPoints}
-                  onChange={(e) => setRedeemPoints(e.target.value)}
-                  max={foundCustomer.points}
-                  className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {redeemPoints && <LiveCashValue points={redeemPoints} />}
-              </div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Points to Redeem
+              </label>
+              <input
+                type="number"
+                placeholder="Enter points to redeem"
+                value={redeemPoints}
+                onChange={(e) => setRedeemPoints(e.target.value)}
+                max={foundCustomer.points}
+                className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {redeemPoints && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Cash value: {cashValue !== null ? `$${cashValue.toFixed(2)}` : "Loading..."}
+                </p>
+              )}
               <div className="flex gap-2">
                 <button
                   onClick={handleRedeemPoints}
-                  disabled={
-                    isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points
-                  }
+                  disabled={isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points}
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {isProcessing ? "Processing..." : "Redeem Points"}
                 </button>
                 <button
-                  onClick={() => setFoundCustomer(null)}
+                  onClick={() => {
+                    setFoundCustomer(null);
+                    setCashValue(null);
+                  }}
                   className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
                 >
                   Cancel
@@ -171,8 +193,7 @@ const Redeem = () => {
               <div>
                 <h3 className="font-semibold text-green-900">Points Redeemed Successfully!</h3>
                 <p className="text-green-800">
-                  Customer redeemed {redeemPoints} points for $
-                  {redeemPoints && parseFloat(redeemPoints * 0.05).toFixed(2)}.
+                  Customer redeemed {redeemPoints} points for ${cashValue?.toFixed(2)}.
                 </p>
               </div>
             </div>
@@ -180,28 +201,6 @@ const Redeem = () => {
         )}
       </div>
     </div>
-  );
-};
-
-const LiveCashValue = ({ points }) => {
-  const [cash, setCash] = useState(null);
-
-  useEffect(() => {
-    const fetchCash = async () => {
-      try {
-        const res = await pointsApi.redeemPreview(parseInt(points));
-        setCash(res.data.data.cashValue);
-      } catch (err) {
-        setCash(null);
-      }
-    };
-    if (points && !isNaN(points)) fetchCash();
-  }, [points]);
-
-  return (
-    <p className="text-sm text-gray-600 mt-1">
-      Cash value: {cash !== null ? `$${cash.toFixed(2)}` : "..."}
-    </p>
   );
 };
 
