@@ -206,5 +206,27 @@
       document.getElementById('privacyModal').classList.remove('flex');
     }
   </script>
+  <!-- Terms and Conditions Modal -->
+<div id="termsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white max-w-lg w-full p-6 rounded-lg shadow-lg relative">
+    <button onclick="closeTerms()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Terms and Conditions</h2>
+    <p class="text-gray-600 text-sm leading-relaxed">
+      By joining our Loyalty Program, you agree to allow us to collect and use your personal information to enhance your shopping experience. Points are awarded only for eligible purchases and cannot be transferred or redeemed for cash. We reserve the right to modify or terminate the program at any time without prior notice. Misuse of the program may result in suspension or termination of your membership.
+    </p>
+  </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div id="privacyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white max-w-lg w-full p-6 rounded-lg shadow-lg relative">
+    <button onclick="closePrivacy()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Privacy Policy</h2>
+    <p class="text-gray-600 text-sm leading-relaxed">
+      We value your privacy. Any information you provide through the loyalty registration form is stored securely and used solely to deliver program benefits such as point tracking, rewards, and personalized offers. Your data will never be sold or shared with third parties without your explicit consent, except as required by law. You may request to delete your data at any time.
+    </p>
+  </div>
+</div>
+
 </body>
 </html>
