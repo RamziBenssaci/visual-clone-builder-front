@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Star, Plus, Edit, Trash2 } from "lucide-react";
 import { campaignApi } from "../services/api";
@@ -12,8 +11,10 @@ interface Campaign {
   description: string;
   startDate: string;
   endDate: string;
-  earnRate: string;
-  redeemRate: string;
+  earnDollars: string;
+  earnPoints: string;
+  redeemPoints: string;
+  redeemDollars: string;
   status: 'Active' | 'Expired';
 }
 
@@ -36,7 +37,6 @@ const Campaigns = () => {
       setCampaigns(response.data.data);
     } catch (error) {
       console.error('Failed to fetch campaigns:', error);
-      // Fallback to mock data
       setCampaigns([
         {
           id: 1,
@@ -44,8 +44,10 @@ const Campaigns = () => {
           description: "Earn double points during winter season",
           startDate: "1/1/2024",
           endDate: "3/31/2024",
-          earnRate: "2x points/$",
-          redeemRate: "$0.05/point",
+          earnDollars: "100",
+          earnPoints: "200",
+          redeemPoints: "100",
+          redeemDollars: "5",
           status: "Expired"
         }
       ]);
@@ -65,8 +67,7 @@ const Campaigns = () => {
   };
 
   const handleSaveCampaign = async (updatedCampaign: Campaign) => {
-      console.log("Sending to API:", updatedCampaign); // Add this
-
+    console.log("Sending to API:", updatedCampaign);
     try {
       await campaignApi.update(updatedCampaign.id, updatedCampaign);
       setCampaigns(campaigns.map(c => c.id === updatedCampaign.id ? updatedCampaign : c));
@@ -117,7 +118,6 @@ const Campaigns = () => {
         </div>
       </div>
 
-      {/* Campaign Management Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
           <div className="flex items-center space-x-2">
@@ -134,7 +134,6 @@ const Campaigns = () => {
         </div>
       </div>
 
-      {/* Campaigns List */}
       <div className="bg-white p-4 lg:p-6 rounded-b-lg shadow-sm">
         {campaigns.length === 0 ? (
           <div className="text-center py-12">
@@ -164,8 +163,8 @@ const Campaigns = () => {
                         <span className="break-words">{campaign.startDate} - {campaign.endDate}</span>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
-                        <span><strong>Earn:</strong> {campaign.earnRate}</span>
-                        <span><strong>Redeem:</strong> {campaign.redeemRate}</span>
+                        <span><strong>Earn:</strong> {campaign.earnDollars}$ ➜ {campaign.earnPoints} pts</span>
+                        <span><strong>Redeem:</strong> {campaign.redeemPoints} pts ➜ {campaign.redeemDollars}$</span>
                       </div>
                     </div>
                   </div>
@@ -190,7 +189,6 @@ const Campaigns = () => {
         )}
       </div>
 
-      {/* Modals */}
       {showAddModal && (
         <AddCampaignModal
           onSave={handleAddCampaign}
