@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Gift, Search, Check } from "lucide-react";
 import { pointsApi } from "../services/api";
 
@@ -13,7 +12,6 @@ const Redeem = () => {
 
   const handleSearch = async () => {
     if (!phoneNumber.trim()) return;
-    
     setIsSearching(true);
     try {
       const response = await pointsApi.searchCustomer(phoneNumber);
@@ -37,21 +35,21 @@ const Redeem = () => {
 
     setIsProcessing(true);
     try {
-      const cashValue = pointsToRedeem * 0.05; // 20:1 ratio
-      
+      const res = await pointsApi.redeemPreview(pointsToRedeem);
+      const cashValue = res.data.data.cashValue;
+
       const redeemData = {
         customerId: foundCustomer.id,
         points: pointsToRedeem,
         cashValue: cashValue,
-        description: "Cash redemption"
+        description: "Cash redemption",
       };
 
       await pointsApi.redeem(redeemData);
-      
-      // Update customer points locally
+
       setFoundCustomer({
         ...foundCustomer,
-        points: foundCustomer.points - pointsToRedeem
+        points: foundCustomer.points - pointsToRedeem,
       });
 
       setShowSuccess(true);
@@ -75,7 +73,6 @@ const Redeem = () => {
         <h2 className="text-2xl font-bold text-gray-800">Redeem Points</h2>
       </div>
 
-      {/* Redeem Points Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center space-x-2">
           <Gift className="w-5 h-5" />
@@ -83,7 +80,6 @@ const Redeem = () => {
         </div>
       </div>
 
-      {/* Search and Redeem Form */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         {!foundCustomer && !showSuccess && (
           <div className="max-w-md mx-auto lg:mx-0">
@@ -105,7 +101,7 @@ const Redeem = () => {
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50"
                 >
                   <Search className="w-4 h-4" />
-                  <span>{isSearching ? 'Searching...' : 'Search'}</span>
+                  <span>{isSearching ? "Searching..." : "Search"}</span>
                 </button>
               </div>
             </div>
@@ -143,18 +139,17 @@ const Redeem = () => {
                   max={foundCustomer.points}
                   className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-             {redeemPoints && (
-  <LiveCashValue points={redeemPoints} />
-)}
-
+                {redeemPoints && <LiveCashValue points={redeemPoints} />}
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleRedeemPoints}
-                  disabled={isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points}
+                  disabled={
+                    isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points
+                  }
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  {isProcessing ? 'Processing...' : 'Redeem Points'}
+                  {isProcessing ? "Processing..." : "Redeem Points"}
                 </button>
                 <button
                   onClick={() => setFoundCustomer(null)}
@@ -175,7 +170,10 @@ const Redeem = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-green-900">Points Redeemed Successfully!</h3>
-                <p className="text-green-800">Customer redeemed {redeemPoints} points for ${(parseInt(redeemPoints) * 0.05).toFixed(2)}.</p>
+                <p className="text-green-800">
+                  Customer redeemed {redeemPoints} points for $
+                  {redeemPoints && parseFloat(redeemPoints * 0.05).toFixed(2)}.
+                </p>
               </div>
             </div>
           </div>
@@ -184,6 +182,7 @@ const Redeem = () => {
     </div>
   );
 };
+
 const LiveCashValue = ({ points }) => {
   const [cash, setCash] = useState(null);
 
@@ -201,7 +200,7 @@ const LiveCashValue = ({ points }) => {
 
   return (
     <p className="text-sm text-gray-600 mt-1">
-      Cash value: {cash !== null ? `$${cash.toFixed(2)}` : '...'}
+      Cash value: {cash !== null ? `$${cash.toFixed(2)}` : "..."}
     </p>
   );
 };
