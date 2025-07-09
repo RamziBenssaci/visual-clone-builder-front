@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Base API configuration
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://test.freedomprocessing3.com/public/api',
+  baseURL: process.env.REACT_APP_API_URL || 'https://test.freedomprocessing3.com/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
