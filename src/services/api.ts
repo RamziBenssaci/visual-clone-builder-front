@@ -59,6 +59,8 @@ export const pointsApi = {
   deduct: (data: any) => api.post('/points/deduct', data),
   searchCustomer: (phone: string) => api.get(`/points/search-customer?phone=${phone}`),
     previewPoints: (amount: number) => api.post('/points/preview', { amount }),
+  redeemPreview: (points: number) => api.get(`/redeem-preview/${points}`),
+
 
 };
 
