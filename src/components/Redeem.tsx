@@ -143,11 +143,10 @@ const Redeem = () => {
                   max={foundCustomer.points}
                   className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                {redeemPoints && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Cash value: ${(parseInt(redeemPoints) * 0.05).toFixed(2)}
-                  </p>
-                )}
+             {redeemPoints && (
+  <LiveCashValue points={redeemPoints} />
+)}
+
               </div>
               <div className="flex gap-2">
                 <button
@@ -183,6 +182,27 @@ const Redeem = () => {
         )}
       </div>
     </div>
+  );
+};
+const LiveCashValue = ({ points }) => {
+  const [cash, setCash] = useState(null);
+
+  useEffect(() => {
+    const fetchCash = async () => {
+      try {
+        const res = await pointsApi.redeemPreview(parseInt(points));
+        setCash(res.data.data.cashValue);
+      } catch (err) {
+        setCash(null);
+      }
+    };
+    if (points && !isNaN(points)) fetchCash();
+  }, [points]);
+
+  return (
+    <p className="text-sm text-gray-600 mt-1">
+      Cash value: {cash !== null ? `$${cash.toFixed(2)}` : '...'}
+    </p>
   );
 };
 
