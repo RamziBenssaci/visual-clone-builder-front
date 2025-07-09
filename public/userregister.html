@@ -6,25 +6,6 @@
   <title>Customer Registration - Loyalty Program</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
- <style>
-    .notification {
-      position: fixed;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 9999;
-      display: none;
-    }
-    .notification.show {
-      display: flex;
-      animation: fadeInOut 4s ease-in-out forwards;
-    }
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translate(-50%, -20px); }
-      10%, 90% { opacity: 1; transform: translate(-50%, 0); }
-      100% { opacity: 0; transform: translate(-50%, -20px); }
-    }
-  </style>
 </head>
 <body class="bg-gray-50">
   <header class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
@@ -191,11 +172,10 @@
 
         const result = await response.json();
 
-     
         if (result.success) {
           showNotification('success', 'Registration successful! Redirecting...');
           setTimeout(() => {
-            window.location.href = 'customerlogin.html';
+            window.location.href = 'userdashboard.html';
           }, 2000);
         } else {
           showNotification('error', result.message || 'Registration failed.');
