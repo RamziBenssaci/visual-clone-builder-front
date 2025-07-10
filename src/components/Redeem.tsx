@@ -13,6 +13,7 @@ const Redeem = () => {
   const [cashValue, setCashValue] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     const fetchCashValue = async () => {
@@ -56,11 +57,13 @@ const Redeem = () => {
   };
 
   const handleRedeemPoints = async () => {
+    setErrorMsg("");
+
     if (!foundCustomer || !redeemPoints || !cashValue || !selectedCampaignId) return;
 
     const pointsToRedeem = parseInt(redeemPoints);
     if (pointsToRedeem > foundCustomer.points) {
-      alert("Insufficient points!");
+      setErrorMsg(`You only have ${foundCustomer.points} points. Please enter a valid amount.`);
       return;
     }
 
@@ -89,9 +92,11 @@ const Redeem = () => {
         setRedeemPoints("");
         setCashValue(null);
         setSelectedCampaignId(null);
+        setErrorMsg("");
       }, 3000);
     } catch (error) {
       console.error("Failed to redeem points:", error);
+      setErrorMsg("An unexpected error occurred while redeeming points.");
     } finally {
       setIsProcessing(false);
     }
@@ -204,7 +209,7 @@ const Redeem = () => {
               <div className="flex gap-2">
                 <button
                   onClick={handleRedeemPoints}
-                  disabled={isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points || !selectedCampaignId}
+                  disabled={isProcessing || !redeemPoints || !selectedCampaignId}
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
                   {isProcessing ? "Processing..." : "Redeem Points"}
@@ -215,12 +220,17 @@ const Redeem = () => {
                     setCashValue(null);
                     setSelectedCampaignId(null);
                     setRedeemPoints("");
+                    setErrorMsg("");
                   }}
                   className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
                 >
                   Cancel
                 </button>
               </div>
+
+              {errorMsg && (
+                <p className="text-sm text-red-600 mt-2 font-medium">{errorMsg}</p>
+              )}
             </div>
           </div>
         )}
