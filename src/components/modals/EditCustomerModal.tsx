@@ -27,7 +27,7 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
     points: customer.points.toString(),
   });
 
-  const [pinCode, setPinCode] = useState("••••");
+const [pinCode, setPinCode] = useState("");
 
   useEffect(() => {
     customersApi.getById(customer.id).then(res => {
@@ -104,7 +104,7 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               <input
                 type="text"
                 value={pinCode}
-                readOnly
+                
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
               />
             </div>
