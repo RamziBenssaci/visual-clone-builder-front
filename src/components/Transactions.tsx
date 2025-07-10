@@ -185,7 +185,7 @@ const Transactions = () => {
           </div>
         </div>
       {/* Transactions List */}
-      <div className="bg-white p-6 rounded-b-lg shadow-sm">
+      <div className="bg-white p-6 rounded-b-lg shadow-sm"> 
         <div className="space-y-4">
           {filteredTransactions.map((transaction) => (
             <div key={transaction.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
