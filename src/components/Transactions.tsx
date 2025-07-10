@@ -110,14 +110,19 @@ const Transactions = () => {
     }
   };
 
-  const handleDeleteTransaction = async (transactionId: number) => {
-    try {
-      await transactionsApi.delete(transactionId);
-      setTransactions(transactions.filter(t => t.id !== transactionId));
-    } catch (error) {
-      console.error('Failed to delete transaction:', error);
-    }
-  };
+const handleDeleteTransaction = async (transactionId: number) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this transaction? This will not affect the customer's points, but it will remove the record from history permanently."
+  );
+  if (!confirmed) return;
+
+  try {
+    await transactionsApi.delete(transactionId);
+    setTransactions(transactions.filter(t => t.id !== transactionId));
+  } catch (error) {
+    console.error('Failed to delete transaction:', error);
+  }
+};
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
