@@ -107,7 +107,7 @@ const Transactions = () => {
     }
   };
 
-  const confirmDeleteTransaction = async () => {
+  const handleDeleteTransaction = async () => {
     if (!transactionToDelete) return;
     try {
       await transactionsApi.delete(transactionToDelete.id);
