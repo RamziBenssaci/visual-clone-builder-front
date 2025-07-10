@@ -31,6 +31,8 @@ const [pinCode, setPinCode] = useState("");
 
   useEffect(() => {
     customersApi.getById(customer.id).then(res => {
+          console.log("Fetched customer", res.data);
+
       const realPin = res.data.data.customer.pin_code;
       if (realPin) setPinCode(realPin);
     }).catch(err => {
