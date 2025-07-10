@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Award, Search, Users, Check } from "lucide-react";
 import { pointsApi } from "../services/api";
+import { campaignsApi } from "../services/api";
 
 const Earn = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -38,7 +39,7 @@ const Earn = () => {
       const response = await pointsApi.searchCustomer(phoneNumber);
       setFoundCustomer(response.data.data);
 
-      const campaignsRes = await pointsApi.getAll();
+const campaignsRes = await campaignsApi.getAll();
       setCampaigns(campaignsRes.data.data);
     } catch (error) {
       console.error("Customer search failed:", error);
