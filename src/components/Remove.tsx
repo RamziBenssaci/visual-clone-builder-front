@@ -1,23 +1,36 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Minus, Search, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { pointsApi } from "../services/api";
+import { pointsApi, campaignApi } from "../services/api";
 
 const Remove = () => {
   const [searchPhone, setSearchPhone] = useState("");
   const [foundCustomer, setFoundCustomer] = useState(null);
   const [refundAmount, setRefundAmount] = useState("");
+  const [campaigns, setCampaigns] = useState([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deductionComplete, setDeductionComplete] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const res = await campaignApi.getAll();
+        setCampaigns(res.data.data);
+      } catch (err) {
+        console.error("Failed to fetch campaigns", err);
+      }
+    };
+    fetchCampaigns();
+  }, []);
+
   const handleSearchCustomer = async () => {
     if (!searchPhone.trim()) return;
-    
+
     setIsSearching(true);
     try {
       const response = await pointsApi.searchCustomer(searchPhone);
@@ -31,8 +44,9 @@ const Remove = () => {
   };
 
   const handleDeductPoints = () => {
-    if (refundAmount && foundCustomer) {
-      const pointsToDeduct = Math.floor(parseFloat(refundAmount) * 2); // 2 points per dollar
+    if (refundAmount && foundCustomer && selectedCampaignId) {
+      const campaign = campaigns.find(c => c.id === parseInt(selectedCampaignId));
+      const pointsToDeduct = Math.floor(parseFloat(refundAmount) * (campaign?.earnPoints / campaign?.earnDollars || 2));
       setShowConfirmation(true);
     }
   };
@@ -43,11 +57,12 @@ const Remove = () => {
       const deductData = {
         customerId: foundCustomer.id,
         refundAmount: parseFloat(refundAmount),
-        reason: "Product return refund"
+        reason: "Product return refund",
+        campaignId: selectedCampaignId
       };
 
       await pointsApi.deduct(deductData);
-      
+
       setDeductionComplete(true);
       setShowConfirmation(false);
       setTimeout(() => {
@@ -55,6 +70,7 @@ const Remove = () => {
         setFoundCustomer(null);
         setSearchPhone("");
         setRefundAmount("");
+        setSelectedCampaignId(null);
       }, 3000);
     } catch (error) {
       console.error("Failed to deduct points:", error);
@@ -70,7 +86,6 @@ const Remove = () => {
         <h2 className="text-2xl font-bold text-gray-800">Remove Points</h2>
       </div>
 
-      {/* Remove Points Header */}
       <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center space-x-2">
           <Minus className="w-5 h-5" />
@@ -78,7 +93,6 @@ const Remove = () => {
         </div>
       </div>
 
-      {/* Search and Deduction Form */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         {!foundCustomer && !deductionComplete && (
           <div className="space-y-4">
@@ -126,6 +140,23 @@ const Remove = () => {
 
             <div className="space-y-4">
               <div>
+                <Label htmlFor="campaign-select">Select Campaign</Label>
+                <select
+                  id="campaign-select"
+                  value={selectedCampaignId || ''}
+                  onChange={(e) => setSelectedCampaignId(e.target.value)}
+                  className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="" disabled>Select a campaign</option>
+                  {campaigns.map(c => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} ({c.earnPoints} pts / ${c.earnDollars})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <Label htmlFor="refund-amount">Refund Amount ($)</Label>
                 <Input
                   id="refund-amount"
@@ -136,14 +167,21 @@ const Remove = () => {
                   onChange={(e) => setRefundAmount(e.target.value)}
                   className="max-w-xs"
                 />
-                {refundAmount && (
+                {refundAmount && selectedCampaignId && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Points to deduct: {Math.floor(parseFloat(refundAmount) * 2)} points
+                    Points to deduct: {
+                      Math.floor(
+                        parseFloat(refundAmount) * (
+                          (campaigns.find(c => c.id === parseInt(selectedCampaignId))?.earnPoints || 2) /
+                          (campaigns.find(c => c.id === parseInt(selectedCampaignId))?.earnDollars || 1)
+                        )
+                      )
+                    } points
                   </p>
                 )}
               </div>
               <div className="flex gap-2">
-                <Button onClick={handleDeductPoints} disabled={!refundAmount}>
+                <Button onClick={handleDeductPoints} disabled={!refundAmount || !selectedCampaignId}>
                   Deduct Points
                 </Button>
                 <Button variant="outline" onClick={() => setFoundCustomer(null)}>
