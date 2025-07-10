@@ -1,7 +1,7 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Gift, Search, Check } from "lucide-react";
 import { pointsApi } from "../services/api";
+import { campaignApi } from "../services/api";
 
 const Redeem = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -10,14 +10,43 @@ const Redeem = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [cashValue, setCashValue] = useState(null);
+  const [campaigns, setCampaigns] = useState([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
+
+  useEffect(() => {
+    const fetchCashValue = async () => {
+      if (
+        !redeemPoints ||
+        isNaN(redeemPoints) ||
+        parseInt(redeemPoints) <= 0 ||
+        !selectedCampaignId
+      ) {
+        setCashValue(null);
+        return;
+      }
+
+      const campaign = campaigns.find(c => c.id === parseInt(selectedCampaignId));
+      if (!campaign) return;
+
+      const dollarPerPoint = campaign.redeemDollars / Math.max(campaign.redeemPoints, 0.0001);
+      const value = parseInt(redeemPoints) * dollarPerPoint;
+      setCashValue(value);
+    };
+
+    fetchCashValue();
+  }, [redeemPoints, selectedCampaignId, campaigns]);
 
   const handleSearch = async () => {
     if (!phoneNumber.trim()) return;
-    
+
     setIsSearching(true);
     try {
       const response = await pointsApi.searchCustomer(phoneNumber);
       setFoundCustomer(response.data.data);
+
+      const campaignRes = await campaignApi.getAll();
+      setCampaigns(campaignRes.data.data);
     } catch (error) {
       console.error("Customer search failed:", error);
       setFoundCustomer(null);
@@ -27,7 +56,7 @@ const Redeem = () => {
   };
 
   const handleRedeemPoints = async () => {
-    if (!foundCustomer || !redeemPoints) return;
+    if (!foundCustomer || !redeemPoints || !cashValue || !selectedCampaignId) return;
 
     const pointsToRedeem = parseInt(redeemPoints);
     if (pointsToRedeem > foundCustomer.points) {
@@ -37,18 +66,16 @@ const Redeem = () => {
 
     setIsProcessing(true);
     try {
-      const cashValue = pointsToRedeem * 0.05; // 20:1 ratio
-      
       const redeemData = {
         customerId: foundCustomer.id,
         points: pointsToRedeem,
         cashValue: cashValue,
-        description: "Cash redemption"
+        description: "Cash redemption",
+        campaignId: selectedCampaignId
       };
 
       await pointsApi.redeem(redeemData);
-      
-      // Update customer points locally
+
       setFoundCustomer({
         ...foundCustomer,
         points: foundCustomer.points - pointsToRedeem
@@ -60,6 +87,8 @@ const Redeem = () => {
         setFoundCustomer(null);
         setPhoneNumber("");
         setRedeemPoints("");
+        setCashValue(null);
+        setSelectedCampaignId(null);
       }, 3000);
     } catch (error) {
       console.error("Failed to redeem points:", error);
@@ -75,7 +104,6 @@ const Redeem = () => {
         <h2 className="text-2xl font-bold text-gray-800">Redeem Points</h2>
       </div>
 
-      {/* Redeem Points Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center space-x-2">
           <Gift className="w-5 h-5" />
@@ -83,31 +111,28 @@ const Redeem = () => {
         </div>
       </div>
 
-      {/* Search and Redeem Form */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         {!foundCustomer && !showSuccess && (
           <div className="max-w-md mx-auto lg:mx-0">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Phone Number
-              </label>
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-                <input
-                  type="tel"
-                  placeholder="05xxxxxxxx"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  onClick={handleSearch}
-                  disabled={isSearching || !phoneNumber.trim()}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50"
-                >
-                  <Search className="w-4 h-4" />
-                  <span>{isSearching ? 'Searching...' : 'Search'}</span>
-                </button>
-              </div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Customer Phone Number
+            </label>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <input
+                type="tel"
+                placeholder="05xxxxxxxx"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                onClick={handleSearch}
+                disabled={isSearching || !phoneNumber.trim()}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto disabled:opacity-50"
+              >
+                <Search className="w-4 h-4" />
+                <span>{isSearching ? "Searching..." : "Search"}</span>
+              </button>
             </div>
           </div>
         )}
@@ -131,34 +156,66 @@ const Redeem = () => {
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Points to Redeem
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter points to redeem"
-                  value={redeemPoints}
-                  onChange={(e) => setRedeemPoints(e.target.value)}
-                  max={foundCustomer.points}
-                  className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {redeemPoints && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Cash value: ${(parseInt(redeemPoints) * 0.05).toFixed(2)}
-                  </p>
-                )}
+              <label className="block text-sm font-medium text-gray-700 mb-1">Select Campaign</label>
+              <div className="relative max-w-xs">
+                <select
+                  value={selectedCampaignId || ""}
+                  onChange={(e) => setSelectedCampaignId(e.target.value)}
+                  className="w-full appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
+                >
+                  <option value="" disabled>
+                    Select a campaign
+                  </option>
+                  {campaigns.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} ({c.redeemPoints} pts / ${c.redeemDollars})
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
+
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Points to Redeem
+              </label>
+              <input
+                type="number"
+                placeholder="Enter points to redeem"
+                value={redeemPoints}
+                onChange={(e) => setRedeemPoints(e.target.value)}
+                max={foundCustomer.points}
+                className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {redeemPoints && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Cash value: {cashValue !== null ? `$${cashValue.toFixed(2)}` : "Loading..."}
+                </p>
+              )}
               <div className="flex gap-2">
                 <button
                   onClick={handleRedeemPoints}
-                  disabled={isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points}
+                  disabled={isProcessing || !redeemPoints || parseInt(redeemPoints) > foundCustomer.points || !selectedCampaignId}
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  {isProcessing ? 'Processing...' : 'Redeem Points'}
+                  {isProcessing ? "Processing..." : "Redeem Points"}
                 </button>
                 <button
-                  onClick={() => setFoundCustomer(null)}
+                  onClick={() => {
+                    setFoundCustomer(null);
+                    setCashValue(null);
+                    setSelectedCampaignId(null);
+                    setRedeemPoints("");
+                  }}
                   className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
                 >
                   Cancel
@@ -176,7 +233,9 @@ const Redeem = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-green-900">Points Redeemed Successfully!</h3>
-                <p className="text-green-800">Customer redeemed {redeemPoints} points for ${(parseInt(redeemPoints) * 0.05).toFixed(2)}.</p>
+                <p className="text-green-800">
+                  Customer redeemed {redeemPoints} points for ${cashValue?.toFixed(2)}.
+                </p>
               </div>
             </div>
           </div>
