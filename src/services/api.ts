@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Base API configuration
