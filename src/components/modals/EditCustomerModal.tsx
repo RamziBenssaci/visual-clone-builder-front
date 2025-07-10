@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // ← make sure useEffect is imported
 import { X } from "lucide-react";
+import { customersApi } from "../services/api";
 
 interface Customer {
   id: number;
@@ -10,7 +11,6 @@ interface Customer {
   cashValue: string;
   gender: string;
   joined: string;
-  pinCode: string; // Make sure this is part of the interface
 }
 
 interface EditCustomerModalProps {
@@ -26,6 +26,17 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
     gender: customer.gender,
     points: customer.points.toString(),
   });
+
+  const [pinCode, setPinCode] = useState("••••");
+
+  useEffect(() => {
+    customersApi.getById(customer.id).then(res => {
+      const realPin = res.data.data.pin_code;
+      if (realPin) setPinCode(realPin);
+    }).catch(err => {
+      console.error("Failed to fetch pin_code", err);
+    });
+  }, [customer.id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,10 +65,9 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
+            {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <input
                 type="text"
                 value={formData.name}
@@ -67,10 +77,9 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               />
             </div>
 
+            {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <input
                 type="text"
                 value={formData.phone}
@@ -80,10 +89,9 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               />
             </div>
 
+            {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
@@ -94,22 +102,20 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               </select>
             </div>
 
+            {/* PIN Code */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                PIN Code
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">PIN Code</label>
               <input
                 type="text"
-                value={customer.pinCode}
+                value={pinCode}
                 readOnly
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
               />
             </div>
 
+            {/* Points */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Points Balance
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Points Balance</label>
               <input
                 type="number"
                 value={formData.points}
