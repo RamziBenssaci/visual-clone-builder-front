@@ -57,7 +57,7 @@ const Customers = () => {
         totalCustomers,
         totalPoints,
         goldPlatinum,
-        totalValue: `$${totalValue}`
+        totalValue: $${totalValue}
       });
     } catch (error) {
       console.error('Failed to fetch customers:', error);
@@ -228,10 +228,9 @@ const filteredCustomers = searchTerm.trim()
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Membership Tier</span>
-<span className={`px-2 py-1 rounded text-xs font-medium ${
-  customer.tier === 'Gold' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
-}`}>
-
+                  <span className={px-2 py-1 rounded text-xs font-medium ${
+                    customer.tier === 'Gold' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                  }}>
                     {customer.tier === 'Gold' ? '👑' : '🥈'} {customer.tier}
                   </span>
                 </div>
