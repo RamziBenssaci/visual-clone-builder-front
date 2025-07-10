@@ -45,7 +45,7 @@ export const analyticsApi = {
 // Customers API
 export const customersApi = {
   getAll: (params?: any) => api.get('/customers', { params }),
-  getById: (id: number) => api.get(`/customers/${id}`),
+  getById: (id: number) => customersApi.getById(customer.id),
   create: (data: any) => api.post('/customers', data),
   update: (id: number, data: any) => api.put(`/customers/${id}`, data),
   delete: (id: number) => api.delete(`/customers/${id}`),
