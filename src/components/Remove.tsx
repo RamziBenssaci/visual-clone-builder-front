@@ -15,6 +15,7 @@ const Remove = () => {
   const [deductionComplete, setDeductionComplete] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -43,12 +44,23 @@ const Remove = () => {
     }
   };
 
+  const calculatePointsToDeduct = () => {
+    const campaign = campaigns.find(c => c.id === parseInt(selectedCampaignId));
+    const rate = (campaign?.earnPoints || 2) / (campaign?.earnDollars || 1);
+    return Math.floor(parseFloat(refundAmount || "0") * rate);
+  };
+
   const handleDeductPoints = () => {
-    if (refundAmount && foundCustomer && selectedCampaignId) {
-      const campaign = campaigns.find(c => c.id === parseInt(selectedCampaignId));
-      const pointsToDeduct = Math.floor(parseFloat(refundAmount) * (campaign?.earnPoints / campaign?.earnDollars || 2));
-      setShowConfirmation(true);
+    if (!refundAmount || !foundCustomer || !selectedCampaignId) return;
+
+    const pointsToDeduct = calculatePointsToDeduct();
+    if (pointsToDeduct > foundCustomer.points) {
+      setErrorMsg(`You cannot deduct ${pointsToDeduct} points. Customer only has ${foundCustomer.points} points.`);
+      return;
     }
+
+    setErrorMsg("");
+    setShowConfirmation(true);
   };
 
   const confirmDeduction = async () => {
@@ -71,6 +83,7 @@ const Remove = () => {
         setSearchPhone("");
         setRefundAmount("");
         setSelectedCampaignId(null);
+        setErrorMsg("");
       }, 3000);
     } catch (error) {
       console.error("Failed to deduct points:", error);
@@ -144,7 +157,10 @@ const Remove = () => {
                 <select
                   id="campaign-select"
                   value={selectedCampaignId || ''}
-                  onChange={(e) => setSelectedCampaignId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedCampaignId(e.target.value);
+                    setErrorMsg("");
+                  }}
                   className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="" disabled>Select a campaign</option>
@@ -164,30 +180,34 @@ const Remove = () => {
                   step="0.01"
                   placeholder="Enter refund amount"
                   value={refundAmount}
-                  onChange={(e) => setRefundAmount(e.target.value)}
+                  onChange={(e) => {
+                    setRefundAmount(e.target.value);
+                    setErrorMsg("");
+                  }}
                   className="max-w-xs"
                 />
                 {refundAmount && selectedCampaignId && (
                   <p className="text-sm text-gray-600 mt-1">
-                    Points to deduct: {
-                      Math.floor(
-                        parseFloat(refundAmount) * (
-                          (campaigns.find(c => c.id === parseInt(selectedCampaignId))?.earnPoints || 2) /
-                          (campaigns.find(c => c.id === parseInt(selectedCampaignId))?.earnDollars || 1)
-                        )
-                      )
-                    } points
+                    Points to deduct: {calculatePointsToDeduct()} points
                   </p>
                 )}
               </div>
+
               <div className="flex gap-2">
                 <Button onClick={handleDeductPoints} disabled={!refundAmount || !selectedCampaignId}>
                   Deduct Points
                 </Button>
-                <Button variant="outline" onClick={() => setFoundCustomer(null)}>
+                <Button variant="outline" onClick={() => {
+                  setFoundCustomer(null);
+                  setErrorMsg("");
+                }}>
                   Cancel
                 </Button>
               </div>
+
+              {errorMsg && (
+                <p className="text-sm text-red-600 font-medium mt-2">{errorMsg}</p>
+              )}
             </div>
           </div>
         )}
@@ -203,8 +223,8 @@ const Remove = () => {
             <div className="space-y-2 mb-4">
               <p className="text-yellow-800">Customer: {foundCustomer.name}</p>
               <p className="text-yellow-800">Refund Amount: ${refundAmount}</p>
-              <p className="text-yellow-800">Points to Deduct: {Math.floor(parseFloat(refundAmount) * 2)} points</p>
-              <p className="text-yellow-800">Remaining Points: {foundCustomer.points - Math.floor(parseFloat(refundAmount) * 2)} points</p>
+              <p className="text-yellow-800">Points to Deduct: {calculatePointsToDeduct()} points</p>
+              <p className="text-yellow-800">Remaining Points: {foundCustomer.points - calculatePointsToDeduct()} points</p>
             </div>
             <div className="flex gap-2">
               <Button 
