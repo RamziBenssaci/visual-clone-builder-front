@@ -101,13 +101,13 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 PIN Code
               </label>
-              <input
-                type="password"
-                value="••••"
-                readOnly
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
-              />
-            </div>
+           <input
+  type="text"
+  value={customer.pin_code}
+  readOnly
+  className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
+/>
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
