@@ -243,7 +243,7 @@ const Transactions = () => {
                 Cancel
               </button>
               <button
-                onClick={confirmDeleteTransaction}
+onClick={handleDeleteTransaction}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Confirm Delete
