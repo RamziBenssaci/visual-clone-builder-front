@@ -57,7 +57,7 @@ const Customers = () => {
         totalCustomers,
         totalPoints,
         goldPlatinum,
-        totalValue: $${totalValue}
+        totalValue: `$${totalValue}`
       });
     } catch (error) {
       console.error('Failed to fetch customers:', error);
