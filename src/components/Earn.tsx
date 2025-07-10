@@ -10,25 +10,26 @@ const Earn = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [campaigns, setCampaigns] = useState([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
 
   useEffect(() => {
     const fetchPreview = async () => {
-      if (!purchaseAmount) {
+      if (!purchaseAmount || !selectedCampaignId) {
         setPreviewPoints(null);
         return;
       }
 
-      try {
-        const res = await pointsApi.previewPoints(purchaseAmount);
-        setPreviewPoints(res.data.points);
-      } catch (err) {
-        console.error("Preview failed", err);
-        setPreviewPoints(null);
-      }
+      const campaign = campaigns.find(c => c.id === parseInt(selectedCampaignId));
+      if (!campaign) return;
+
+      const earnRate = campaign.earnPoints / Math.max(campaign.earnDollars, 0.0001);
+      const preview = parseFloat(purchaseAmount) * earnRate;
+      setPreviewPoints(Math.floor(preview));
     };
 
     fetchPreview();
-  }, [purchaseAmount]);
+  }, [purchaseAmount, selectedCampaignId, campaigns]);
 
   const handleSearch = async () => {
     if (!phoneNumber.trim()) return;
@@ -36,6 +37,9 @@ const Earn = () => {
     try {
       const response = await pointsApi.searchCustomer(phoneNumber);
       setFoundCustomer(response.data.data);
+
+      const campaignsRes = await pointsApi.getAll();
+      setCampaigns(campaignsRes.data.data);
     } catch (error) {
       console.error("Customer search failed:", error);
       setFoundCustomer(null);
@@ -45,14 +49,15 @@ const Earn = () => {
   };
 
   const handleEarnPoints = async () => {
-    if (!foundCustomer || !purchaseAmount) return;
+    if (!foundCustomer || !purchaseAmount || !selectedCampaignId) return;
 
     setIsProcessing(true);
     try {
       const earnData = {
         customerId: foundCustomer.id,
         amount: parseFloat(purchaseAmount),
-        description: "Purchase reward"
+        description: "Purchase reward",
+        campaignId: selectedCampaignId
       };
 
       const response = await pointsApi.earn(earnData);
@@ -67,6 +72,7 @@ const Earn = () => {
         setPhoneNumber("");
         setPurchaseAmount("");
         setPreviewPoints(null);
+        setSelectedCampaignId(null);
       }, 3000);
     } catch (error) {
       console.error("Failed to earn points:", error);
@@ -135,6 +141,22 @@ const Earn = () => {
 
             <div className="space-y-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Select Campaign
+              </label>
+              <select
+                value={selectedCampaignId || ''}
+                onChange={(e) => setSelectedCampaignId(e.target.value)}
+                className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="" disabled>Select a campaign</option>
+                {campaigns.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} ({c.earnPoints} pts / ${c.earnDollars})
+                  </option>
+                ))}
+              </select>
+
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Purchase Amount ($)
               </label>
               <input
@@ -154,7 +176,7 @@ const Earn = () => {
               <div className="flex gap-2">
                 <button
                   onClick={handleEarnPoints}
-                  disabled={isProcessing || !purchaseAmount}
+                  disabled={isProcessing || !purchaseAmount || !selectedCampaignId}
                   className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
                   {isProcessing ? 'Processing...' : 'Add Points'}
@@ -164,6 +186,7 @@ const Earn = () => {
                     setFoundCustomer(null);
                     setPurchaseAmount("");
                     setPreviewPoints(null);
+                    setSelectedCampaignId(null);
                   }}
                   className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
                 >
