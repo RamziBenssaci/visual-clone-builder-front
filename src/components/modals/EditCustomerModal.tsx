@@ -18,7 +18,6 @@ interface EditCustomerModalProps {
   onSave: (customer: Customer) => void;
   onCancel: () => void;
 }
-console.log("Customer object:", customer);
 
 const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProps) => {
   const [formData, setFormData] = useState({
