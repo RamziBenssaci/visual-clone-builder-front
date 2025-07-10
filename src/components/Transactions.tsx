@@ -169,7 +169,21 @@ const Transactions = () => {
           <option>Points Redeemed</option>
         </select>
       </div>
-
+  {/* Stats */}
+        <div className="grid grid-cols-3 gap-6 mt-8 pt-6 border-t">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">{stats.totalTransactions}</div>
+            <div className="text-sm text-gray-600">Total Transactions</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-600">{stats.pointsEarned.toLocaleString()}</div>
+            <div className="text-sm text-gray-600">Points Earned</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600">{stats.pointsRedeemed.toLocaleString()}</div>
+            <div className="text-sm text-gray-600">Points Redeemed</div>
+          </div>
+        </div>
       {/* Transactions List */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         <div className="space-y-4">
@@ -216,21 +230,7 @@ const Transactions = () => {
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 mt-8 pt-6 border-t">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.totalTransactions}</div>
-            <div className="text-sm text-gray-600">Total Transactions</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.pointsEarned.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Points Earned</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">{stats.pointsRedeemed.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Points Redeemed</div>
-          </div>
-        </div>
+      
       </div>
     </div>
   );
