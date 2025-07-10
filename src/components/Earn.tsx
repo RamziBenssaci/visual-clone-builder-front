@@ -1,4 +1,4 @@
- import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Award, Search, Users, Check } from "lucide-react";
 import { pointsApi } from "../services/api";
 import { campaignApi } from "../services/api";
