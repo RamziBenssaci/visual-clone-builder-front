@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"; // ← make sure useEffect is imported
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { customersApi } from "../services/api";
+import { customersApi } from "../../services/api"; // adjust if needed
 
 interface Customer {
   id: number;
@@ -30,8 +30,8 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
   const [pinCode, setPinCode] = useState("••••");
 
   useEffect(() => {
-    customersApi.getById(customer.id).then(res => {
-      const realPin = res.data.data.pin_code;
+    customersApi.get(`/customers/${customer.id}`).then(res => {
+      const realPin = res.data.data.customer.pin_code;
       if (realPin) setPinCode(realPin);
     }).catch(err => {
       console.error("Failed to fetch pin_code", err);
@@ -65,44 +65,40 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 required
               />
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <input
                 type="text"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 required
               />
             </div>
 
-            {/* Gender */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
             </div>
 
-            {/* PIN Code */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">PIN Code</label>
               <input
@@ -113,14 +109,13 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               />
             </div>
 
-            {/* Points */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Points Balance</label>
               <input
                 type="number"
                 value={formData.points}
                 onChange={(e) => setFormData({ ...formData, points: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 required
               />
             </div>
@@ -130,13 +125,13 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg"
             >
               Save Changes
             </button>
