@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Users, Edit, Trash2, Search } from "lucide-react";
 import { customersApi } from "../services/api";
@@ -58,7 +57,7 @@ const Customers = () => {
         totalCustomers,
         totalPoints,
         goldPlatinum,
-        totalValue: `$${totalValue}`
+        totalValue: $${totalValue}
       });
     } catch (error) {
       console.error('Failed to fetch customers:', error);
@@ -190,7 +189,8 @@ const filteredCustomers = searchTerm.trim()
           />
         </div>
       </div>
-{/* Stats */}
+
+        {/* Stats */}
         <div className="grid grid-cols-4 gap-6 mt-8 pt-6 border-t">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{stats.totalCustomers}</div>
@@ -210,6 +210,7 @@ const filteredCustomers = searchTerm.trim()
           </div>
         </div>
       </div>
+
       {/* Customer Grid */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -248,9 +249,9 @@ const filteredCustomers = searchTerm.trim()
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Membership Tier</span>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  <span className={px-2 py-1 rounded text-xs font-medium ${
                     customer.tier === 'Gold' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
-                  }`}>
+                  }}>
                     {customer.tier === 'Gold' ? '👑' : '🥈'} {customer.tier}
                   </span>
                 </div>
@@ -271,7 +272,7 @@ const filteredCustomers = searchTerm.trim()
           ))}
         </div>
 
-        
+      
 
       {/* Modals */}
       {showEditModal && selectedCustomer && (
@@ -298,5 +299,3 @@ const filteredCustomers = searchTerm.trim()
     </div>
   );
 };
-
-export default Customers;
