@@ -140,40 +140,39 @@ const campaignsRes = await campaignApi.getAll();
               </div>
             </div>
 
-           <div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="space-y-4">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
     Select Campaign
   </label>
-  <div className="grid sm:grid-cols-2 gap-4">
-    {campaigns.map((campaign) => {
-      const isSelected = parseInt(selectedCampaignId) === campaign.id;
-      return (
-        <div
-          key={campaign.id}
-          onClick={() => setSelectedCampaignId(campaign.id)}
-          className={`cursor-pointer border rounded-lg p-4 transition-all shadow-sm hover:shadow-md ${
-            isSelected
-              ? 'border-blue-600 ring-2 ring-blue-300 bg-blue-50'
-              : 'border-gray-200'
-          }`}
-        >
-          <h4 className="text-md font-semibold text-gray-800 mb-1">
-            {campaign.name}
-          </h4>
-          <p className="text-sm text-gray-600 mb-1">
-            {campaign.description}
-          </p>
-          <p className="text-sm text-gray-700">
-            <span className="font-medium">{campaign.earnPoints}</span> points per <span className="font-medium">${campaign.earnDollars}</span>
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            {campaign.startDate} - {campaign.endDate}
-          </p>
-        </div>
-      );
-    })}
+  <div className="relative max-w-xs">
+    <select
+      value={selectedCampaignId || ''}
+      onChange={(e) => setSelectedCampaignId(e.target.value)}
+      className="w-full appearance-none border border-gray-300 rounded-lg px-4 py-2 pr-10 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
+    >
+      <option value="" disabled>
+        Select a campaign
+      </option>
+      {campaigns.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name} ({c.earnPoints} pts / ${c.earnDollars})
+        </option>
+      ))}
+    </select>
+    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+      <svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
   </div>
 </div>
+
 
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Purchase Amount ($)
