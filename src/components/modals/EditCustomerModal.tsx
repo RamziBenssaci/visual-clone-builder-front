@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { X } from "lucide-react";
 
@@ -11,6 +10,7 @@ interface Customer {
   cashValue: string;
   gender: string;
   joined: string;
+  pin_code: string; // Make sure this is part of the interface
 }
 
 interface EditCustomerModalProps {
@@ -45,14 +45,11 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Edit Customer</h3>
-          <button
-            onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600"
-          >
+          <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <p className="text-gray-600 mb-6">Update customer information and points balance.</p>
 
         <form onSubmit={handleSubmit}>
@@ -101,14 +98,13 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 PIN Code
               </label>
-           <input
-  type="text"
-  value={customer.pin_code}
-  readOnly
-  className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
-/>
-
-            <div>
+              <input
+                type="text"
+                value={customer.pin_code}
+                readOnly
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
