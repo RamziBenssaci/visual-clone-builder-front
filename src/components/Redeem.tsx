@@ -204,39 +204,4 @@ const Redeem = () => {
   );
 };
 
-export default Redeem;  and   public function redeemPoints(Request $request) {
-    $customer = Customer::findOrFail($request->customerId);
-
-    $campaign = Campaign::where('status', 'Active')
-        ->whereDate('start_date', '<=', now())
-        ->whereDate('end_date', '>=', now())
-        ->first();
-
-    // Default redeem: 10 points = 1 dollar
-    $redeemPoints = 10;
-    $redeemDollars = 1;
-
-    if ($campaign) {
-        $redeemPoints = floatval($campaign->redeem_points ?: 10);
-        $redeemDollars = floatval($campaign->redeem_dollars ?: 1);
-    }
-
-    $dollarPerPoint = $redeemDollars / max($redeemPoints, 0.0001);
-    $cashValue = $request->points * $dollarPerPoint;
-
-    $transaction = $customer->transactions()->create([
-        'type' => 'redeemed',
-        'points' => -$request->points,
-        'amount' => $cashValue,
-        'description' => $request->description
-    ]);
-
-    $customer->points -= $request->points;
-    $customer->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Points redeemed successfully',
-        'data' => compact('transaction', 'customer')
-    ]);
-}
+export default Redeem; 
