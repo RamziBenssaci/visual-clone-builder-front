@@ -205,7 +205,6 @@ const Customers = () => {
             <div className="text-sm text-gray-600">Total Value</div>
           </div>
         </div>
-      </div>
       {/* Customer Grid */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -267,6 +266,7 @@ const Customers = () => {
           ))}
         </div>
 
+      </div>
 
 
       {/* Modals */}
