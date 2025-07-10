@@ -10,7 +10,7 @@ interface Customer {
   cashValue: string;
   gender: string;
   joined: string;
-  pin_code: string; // Make sure this is part of the interface
+  pinCode: string; // Make sure this is part of the interface
 }
 
 interface EditCustomerModalProps {
@@ -101,7 +101,7 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
               </label>
               <input
                 type="text"
-                value={customer.pin_code}
+                value={customer.pinCode}
                 readOnly
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50"
               />
