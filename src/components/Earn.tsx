@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+ import { useState, useEffect } from "react";
 import { Award, Search, Users, Check } from "lucide-react";
 import { pointsApi } from "../services/api";
 import { campaignApi } from "../services/api";
@@ -140,7 +140,7 @@ const campaignsRes = await campaignApi.getAll();
               </div>
             </div>
 
-       <div className="space-y-4">
+            <div className="space-y-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Select Campaign
               </label>
@@ -156,8 +156,6 @@ const campaignsRes = await campaignApi.getAll();
                   </option>
                 ))}
               </select>
-
-
 
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Purchase Amount ($)
