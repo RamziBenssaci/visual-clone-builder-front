@@ -140,22 +140,40 @@ const campaignsRes = await campaignApi.getAll();
               </div>
             </div>
 
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Select Campaign
-              </label>
-              <select
-                value={selectedCampaignId || ''}
-                onChange={(e) => setSelectedCampaignId(e.target.value)}
-                className="max-w-xs border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="" disabled>Select a campaign</option>
-                {campaigns.map(c => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} ({c.earnPoints} pts / ${c.earnDollars})
-                  </option>
-                ))}
-              </select>
+           <div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Select Campaign
+  </label>
+  <div className="grid sm:grid-cols-2 gap-4">
+    {campaigns.map((campaign) => {
+      const isSelected = parseInt(selectedCampaignId) === campaign.id;
+      return (
+        <div
+          key={campaign.id}
+          onClick={() => setSelectedCampaignId(campaign.id)}
+          className={`cursor-pointer border rounded-lg p-4 transition-all shadow-sm hover:shadow-md ${
+            isSelected
+              ? 'border-blue-600 ring-2 ring-blue-300 bg-blue-50'
+              : 'border-gray-200'
+          }`}
+        >
+          <h4 className="text-md font-semibold text-gray-800 mb-1">
+            {campaign.name}
+          </h4>
+          <p className="text-sm text-gray-600 mb-1">
+            {campaign.description}
+          </p>
+          <p className="text-sm text-gray-700">
+            <span className="font-medium">{campaign.earnPoints}</span> points per <span className="font-medium">${campaign.earnDollars}</span>
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {campaign.startDate} - {campaign.endDate}
+          </p>
+        </div>
+      );
+    })}
+  </div>
+</div>
 
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Purchase Amount ($)
