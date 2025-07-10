@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { CreditCard, Search, Trash2 } from "lucide-react";
 import { transactionsApi } from "../services/api";
@@ -19,6 +18,7 @@ const Transactions = () => {
   const [filter, setFilter] = useState("All Transactions");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
   const [stats, setStats] = useState({
     totalTransactions: 0,
     pointsEarned: 0,
@@ -41,14 +41,12 @@ const Transactions = () => {
     try {
       setLoading(true);
       const params: any = {};
-      
       if (filter === "Points Earned") params.type = 'earned';
       if (filter === "Points Redeemed") params.type = 'redeemed';
-      
+
       const response = await transactionsApi.getAll(params);
       setTransactions(response.data.data);
-      
-      // Calculate stats
+
       const totalTransactions = response.data.data.length;
       const pointsEarned = response.data.data
         .filter((t: Transaction) => t.type === 'earned')
@@ -56,11 +54,10 @@ const Transactions = () => {
       const pointsRedeemed = response.data.data
         .filter((t: Transaction) => t.type === 'redeemed')
         .reduce((sum: number, t: Transaction) => sum + Math.abs(t.points), 0);
-      
+
       setStats({ totalTransactions, pointsEarned, pointsRedeemed });
     } catch (error) {
       console.error('Failed to fetch transactions:', error);
-      // Fallback to mock data
       const mockTransactions = [
         {
           id: 1,
@@ -102,7 +99,7 @@ const Transactions = () => {
       const params: any = { search: searchTerm };
       if (filter === "Points Earned") params.type = 'earned';
       if (filter === "Points Redeemed") params.type = 'redeemed';
-      
+
       const response = await transactionsApi.getAll(params);
       setTransactions(response.data.data);
     } catch (error) {
@@ -110,19 +107,17 @@ const Transactions = () => {
     }
   };
 
-const handleDeleteTransaction = async (transactionId: number) => {
-  const confirmed = window.confirm(
-    "Are you sure you want to delete this transaction? This will not affect the customer's points, but it will remove the record from history permanently."
-  );
-  if (!confirmed) return;
-
-  try {
-    await transactionsApi.delete(transactionId);
-    setTransactions(transactions.filter(t => t.id !== transactionId));
-  } catch (error) {
-    console.error('Failed to delete transaction:', error);
-  }
-};
+  const confirmDeleteTransaction = async () => {
+    if (!transactionToDelete) return;
+    try {
+      await transactionsApi.delete(transactionToDelete.id);
+      setTransactions(transactions.filter(t => t.id !== transactionToDelete.id));
+    } catch (error) {
+      console.error('Failed to delete transaction:', error);
+    } finally {
+      setTransactionToDelete(null);
+    }
+  };
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -144,7 +139,6 @@ const handleDeleteTransaction = async (transactionId: number) => {
         <h2 className="text-2xl font-bold text-gray-800">Transaction History</h2>
       </div>
 
-      {/* Transaction History Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center space-x-2">
           <CreditCard className="w-5 h-5" />
@@ -152,7 +146,6 @@ const handleDeleteTransaction = async (transactionId: number) => {
         </div>
       </div>
 
-      {/* Search and Filter */}
       <div className="bg-white px-6 py-4 border-b flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
         <div className="relative flex-1 max-w-md w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -174,23 +167,23 @@ const handleDeleteTransaction = async (transactionId: number) => {
           <option>Points Redeemed</option>
         </select>
       </div>
-  {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 mt-8 pt-6 border-t">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.totalTransactions}</div>
-            <div className="text-sm text-gray-600">Total Transactions</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.pointsEarned.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Points Earned</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">{stats.pointsRedeemed.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Points Redeemed</div>
-          </div>
+
+      <div className="grid grid-cols-3 gap-6 mt-8 pt-6 border-t">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-blue-600">{stats.totalTransactions}</div>
+          <div className="text-sm text-gray-600">Total Transactions</div>
         </div>
-      {/* Transactions List */}
-      <div className="bg-white p-6 rounded-b-lg shadow-sm"> 
+        <div className="text-center">
+          <div className="text-2xl font-bold text-green-600">{stats.pointsEarned.toLocaleString()}</div>
+          <div className="text-sm text-gray-600">Points Earned</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-purple-600">{stats.pointsRedeemed.toLocaleString()}</div>
+          <div className="text-sm text-gray-600">Points Redeemed</div>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-b-lg shadow-sm">
         <div className="space-y-4">
           {filteredTransactions.map((transaction) => (
             <div key={transaction.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
@@ -209,9 +202,7 @@ const handleDeleteTransaction = async (transactionId: number) => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800">{transaction.customerName}</h4>
-                  <p className="text-sm text-gray-600">
-                    ID: {transaction.customerId}
-                  </p>
+                  <p className="text-sm text-gray-600">ID: {transaction.customerId}</p>
                   <p className="text-sm text-gray-600">
                     Points {transaction.type === 'earned' ? 'Earned' : transaction.type === 'redeemed' ? 'Redeemed' : 'Deducted'} • {transaction.date} • {transaction.amount}
                   </p>
@@ -225,7 +216,7 @@ const handleDeleteTransaction = async (transactionId: number) => {
                   <span className="text-sm text-gray-500 ml-1">points</span>
                 </div>
                 <button 
-                  onClick={() => handleDeleteTransaction(transaction.id)}
+                  onClick={() => setTransactionToDelete(transaction)}
                   className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -234,9 +225,33 @@ const handleDeleteTransaction = async (transactionId: number) => {
             </div>
           ))}
         </div>
-
-      
       </div>
+
+      {transactionToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Confirm Delete</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Are you sure you want to delete this transaction?
+              This will not affect the customer's points, but it will permanently remove this transaction from the history.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setTransactionToDelete(null)}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteTransaction}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
