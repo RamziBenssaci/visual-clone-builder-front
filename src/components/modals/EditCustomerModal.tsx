@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { customersApi } from "../../services/api"; // adjust if needed
+import { customersApi } from "../../services/api";
 
 interface Customer {
   id: number;
@@ -30,7 +30,7 @@ const EditCustomerModal = ({ customer, onSave, onCancel }: EditCustomerModalProp
   const [pinCode, setPinCode] = useState("••••");
 
   useEffect(() => {
-    customersApi.get(`/customers/${customer.id}`).then(res => {
+    customersApi.getById(customer.id).then(res => {
       const realPin = res.data.data.customer.pin_code;
       if (realPin) setPinCode(realPin);
     }).catch(err => {
