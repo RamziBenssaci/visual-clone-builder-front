@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { User } from "lucide-react";
 import { customersApi } from "../services/api";
@@ -13,6 +12,7 @@ const Register = () => {
 
   const [recentCustomers, setRecentCustomers] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     fetchRecentCustomers();
@@ -20,14 +20,13 @@ const Register = () => {
 
   const fetchRecentCustomers = async () => {
     try {
-      const response = await customersApi.getAll({ limit: 5, sort: 'recent' });
+      const response = await customersApi.getAll({ limit: 5, sort: "recent" });
       setRecentCustomers(response.data.data.slice(0, 2));
     } catch (error) {
-      console.error('Failed to fetch recent customers:', error);
-      // Fallback to mock data
+      console.error("Failed to fetch recent customers:", error);
       setRecentCustomers([
         { name: "Sarah Wilson", phone: "0559876543", tier: "Gold", points: 6000 },
-        { name: "Ahmed Mohammed", phone: "0551234567", tier: "Silver", points: 2500 }
+        { name: "Ahmed Mohammed", phone: "0551234567", tier: "Silver", points: 2500 },
       ]);
     }
   };
@@ -35,19 +34,19 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
       const customerData = {
         fullName: formData.fullName,
         phoneNumber: formData.phoneNumber,
-        email: "", // Optional field
+        email: "",
         gender: formData.gender,
-        pinCode: formData.pinCode
+        pinCode: formData.pinCode,
       };
 
       await customersApi.create(customerData);
-      
-      // Reset form
+
       setFormData({
         fullName: "",
         phoneNumber: "",
@@ -55,12 +54,19 @@ const Register = () => {
         pinCode: "",
       });
 
-      // Refresh recent customers list
       fetchRecentCustomers();
-      
       console.log("Customer registered successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to register customer:", error);
+
+      if (
+        error.response?.data?.message?.includes("Duplicate entry") &&
+        error.response?.data?.message?.includes("customers_phone_number_unique")
+      ) {
+        setErrorMessage("This phone number is already registered.");
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +79,6 @@ const Register = () => {
         <h2 className="text-2xl font-bold text-gray-800">Register New Customer</h2>
       </div>
 
-      {/* Register Form */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg">
         <div className="flex items-center space-x-2">
           <User className="w-5 h-5" />
@@ -85,6 +90,12 @@ const Register = () => {
         <div className="flex justify-center">
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             <div className="space-y-4">
+              {errorMessage && (
+                <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {errorMessage}
+                </div>
+              )}
+
               <div>
                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-1">
                   <User className="w-4 h-4 text-blue-600" />
@@ -94,7 +105,10 @@ const Register = () => {
                   type="text"
                   placeholder="Enter full name"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, fullName: e.target.value });
+                    setErrorMessage("");
+                  }}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
@@ -109,7 +123,10 @@ const Register = () => {
                   type="tel"
                   placeholder="05xxxxxxxx"
                   value={formData.phoneNumber}
-                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, phoneNumber: e.target.value });
+                    setErrorMessage("");
+                  }}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
@@ -121,7 +138,10 @@ const Register = () => {
                 </label>
                 <select
                   value={formData.gender}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, gender: e.target.value });
+                    setErrorMessage("");
+                  }}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
@@ -141,7 +161,10 @@ const Register = () => {
                   placeholder="••••"
                   maxLength={4}
                   value={formData.pinCode}
-                  onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, pinCode: e.target.value });
+                    setErrorMessage("");
+                  }}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
@@ -156,13 +179,12 @@ const Register = () => {
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <User className="w-4 h-4" />
-                <span>{isSubmitting ? 'Registering...' : 'Register Customer'}</span>
+                <span>{isSubmitting ? "Registering..." : "Register Customer"}</span>
               </button>
             </div>
           </form>
         </div>
 
-        {/* Important Information */}
         <div className="bg-blue-50 p-4 rounded-lg mt-6 max-w-md mx-auto">
           <h4 className="font-medium text-blue-800 mb-2">Important Information:</h4>
           <ul className="text-sm text-blue-700 space-y-1">
@@ -172,7 +194,6 @@ const Register = () => {
           </ul>
         </div>
 
-        {/* Recently Registered Customers */}
         <div className="mt-8 max-w-2xl mx-auto">
           <h4 className="font-semibold text-gray-800 mb-4">Recently Registered Customers</h4>
           <div className="space-y-3">
@@ -183,10 +204,14 @@ const Register = () => {
                   <div className="text-sm text-gray-600">{customer.phone}</div>
                 </div>
                 <div className="text-right">
-                  <div className={`text-xs px-2 py-1 rounded ${
-                    customer.tier === 'Gold' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {customer.tier === 'Gold' ? '👑' : '🥈'} {customer.tier}
+                  <div
+                    className={`text-xs px-2 py-1 rounded ${
+                      customer.tier === "Gold"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {customer.tier === "Gold" ? "👑" : "🥈"} {customer.tier}
                   </div>
                   <div className="text-sm text-gray-600 mt-1">{customer.points.toLocaleString()} points</div>
                 </div>
