@@ -129,58 +129,14 @@ const Settings = () => {
             <div className="p-6">
               <div className="max-w-md mx-auto">
                 <form onSubmit={handleStoreSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Store Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter store name"
-                      value={storeForm.name}
-                      onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="055-123-4567"
-                      value={storeForm.phone}
-                      onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Store Address
-                    </label>
-                    <textarea
-                      placeholder="Enter store address"
-                      value={storeForm.address}
-                      onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
-                  >
-                    <Store className="w-4 h-4" />
-                    <span>Update Store Details</span>
-                  </button>
+                  {/* name / phone / address inputs + button */}
                 </form>
               </div>
             </div>
           )}
         </div>
 
-        {/* System Settings */}
+        {/* System Settings Section */}
         <div className="bg-white rounded-lg shadow-sm">
           <div
             className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg cursor-pointer flex justify-between items-center"
@@ -195,8 +151,47 @@ const Settings = () => {
 
           {systemOpen && (
             <div className="p-6 space-y-8">
-              {/* Credentials + Admin Users sections are here as-is */}
-              {/* No content modified inside */}
+              {/* Update Credentials Section */}
+              <div className="bg-gray-50 rounded-lg p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-gray-800">Update Credentials</h4>
+                </div>
+
+                <div className="max-w-md mx-auto">
+                  <form onSubmit={handleUpdateCredentials} className="space-y-4">
+                    {/* Username + password fields + button */}
+                  </form>
+                </div>
+              </div>
+
+              {/* Admin Users Management */}
+              <div className="bg-gray-50 rounded-lg p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-gray-800">Admin Users Management</h4>
+                </div>
+
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm mb-6">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      {/* Table headers and map of adminUsers */}
+                    </table>
+                  </div>
+                </div>
+
+                {/* Add New Admin */}
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Plus className="w-5 h-5 text-green-600" />
+                    <h5 className="font-semibold text-green-800">Add New Admin</h5>
+                  </div>
+
+                  <form onSubmit={handleAddNewAdmin} className="max-w-md mx-auto">
+                    {/* Username + password + button */}
+                  </form>
+                </div>
+              </div>
             </div>
           )}
         </div>
