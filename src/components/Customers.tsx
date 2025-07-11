@@ -186,25 +186,26 @@ const Customers = () => {
           />
         </div>
       </div>
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-6 mt-8 pt-6 border-t">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.totalCustomers}</div>
-            <div className="text-sm text-gray-600">Total Customers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.totalPoints.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Total Points</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-600">{stats.goldPlatinum}</div>
-            <div className="text-sm text-gray-600">Gold/Platinum</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-orange-600">{stats.totalValue}</div>
-            <div className="text-sm text-gray-600">Total Value</div>
-          </div>
-        </div>
+     {/* Stats */}
+<div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t">
+  <div className="text-center overflow-hidden">
+    <div className="text-lg sm:text-2xl font-bold text-blue-600 truncate">{stats.totalCustomers.toLocaleString()}</div>
+    <div className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Total Customers</div>
+  </div>
+  <div className="text-center overflow-hidden">
+    <div className="text-lg sm:text-2xl font-bold text-green-600 truncate">{stats.totalPoints.toLocaleString()}</div>
+    <div className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Total Points</div>
+  </div>
+  <div className="text-center overflow-hidden">
+    <div className="text-lg sm:text-2xl font-bold text-purple-600 truncate">{stats.goldPlatinum}</div>
+    <div className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Gold/Platinum</div>
+  </div>
+  <div className="text-center overflow-hidden">
+    <div className="text-lg sm:text-2xl font-bold text-orange-600 truncate">{stats.totalValue}</div>
+    <div className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">Total Value</div>
+  </div>
+</div>
+
       {/* Customer Grid */}
       <div className="bg-white p-6 rounded-b-lg shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
