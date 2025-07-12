@@ -4,6 +4,17 @@ import { useStore } from "../contexts/StoreContext";
 
 const Footer = () => {
   const { storeDetails, loading } = useStore();
+useEffect(() => {
+  const cookies = document.cookie.split(';').reduce((acc, curr) => {
+    const [key, value] = curr.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+
+  if (!cookies.admin_id_plain) {
+    window.location.replace('https://test.freedomprocessing3.com/');
+  }
+}, []);
 
   if (loading || !storeDetails) {
     return null;
