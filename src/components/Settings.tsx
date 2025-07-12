@@ -27,7 +27,8 @@ const Settings = () => {
   const [newAdminUsername, setNewAdminUsername] = useState("");
   const [newAdminPassword, setNewAdminPassword] = useState("");
 
-  const [showSystemSettings, setShowSystemSettings] = useState(true);
+  const [showStoreDetails, setShowStoreDetails] = useState(false);
+  const [showSystemSettings, setShowSystemSettings] = useState(false);
 
   useEffect(() => {
     if (storeDetails) {
@@ -112,68 +113,64 @@ const Settings = () => {
 
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="bg-white rounded-lg shadow-sm">
-          <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg">
+          <div
+            className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg cursor-pointer flex items-center justify-between"
+            onClick={() => setShowStoreDetails(!showStoreDetails)}
+          >
             <div className="flex items-center space-x-2">
               <Store className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Store Details</h3>
             </div>
-            <p className="text-green-100 text-sm mt-1">Manage your store information</p>
+            {showStoreDetails ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </div>
 
-          <div className="p-6">
-            <div className="max-w-md mx-auto">
-              <form onSubmit={handleStoreSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Store Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter store name"
-                    value={storeForm.name}
-                    onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="055-123-4567"
-                    value={storeForm.phone}
-                    onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Store Address
-                  </label>
-                  <textarea
-                    placeholder="Enter store address"
-                    value={storeForm.address}
-                    onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
-                >
-                  <Store className="w-4 h-4" />
-                  <span>Update Store Details</span>
-                </button>
-              </form>
+          {showStoreDetails && (
+            <div className="p-6">
+              <div className="max-w-md mx-auto">
+                <form onSubmit={handleStoreSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter store name"
+                      value={storeForm.name}
+                      onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input
+                      type="tel"
+                      placeholder="055-123-4567"
+                      value={storeForm.phone}
+                      onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Address</label>
+                    <textarea
+                      placeholder="Enter store address"
+                      value={storeForm.address}
+                      onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>Update Store Details</span>
+                  </button>
+                </form>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow-sm">
@@ -195,13 +192,10 @@ const Settings = () => {
                   <User className="w-5 h-5 text-blue-600" />
                   <h4 className="text-lg font-semibold text-gray-800">Update Credentials</h4>
                 </div>
-
                 <div className="max-w-md mx-auto">
                   <form onSubmit={handleUpdateCredentials} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        New Username (Optional)
-                      </label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">New Username (Optional)</label>
                       <input
                         type="text"
                         placeholder="Current: admin"
@@ -211,11 +205,9 @@ const Settings = () => {
                       />
                       <p className="text-xs text-gray-500 mt-1">Leave blank to keep current username</p>
                     </div>
-
                     <div className="border-t pt-4">
                       <h5 className="text-sm font-medium text-gray-700 mb-3">Change Password (Optional)</h5>
                       <p className="text-xs text-gray-500 mb-3">Fill all three fields to change password</p>
-                      
                       <div className="space-y-3">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
@@ -227,7 +219,6 @@ const Settings = () => {
                             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           />
                         </div>
-
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
                           <input
@@ -239,7 +230,6 @@ const Settings = () => {
                           />
                           <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
                         </div>
-
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
                           <input
@@ -252,7 +242,6 @@ const Settings = () => {
                         </div>
                       </div>
                     </div>
-
                     <button
                       type="submit"
                       className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 font-medium"
@@ -269,7 +258,6 @@ const Settings = () => {
                   <User className="w-5 h-5 text-blue-600" />
                   <h4 className="text-lg font-semibold text-gray-800">Admin Users Management</h4>
                 </div>
-
                 <div className="bg-white rounded-lg overflow-hidden shadow-sm mb-6">
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -296,7 +284,7 @@ const Settings = () => {
                                 <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                                   <Edit className="w-4 h-4" />
                                 </button>
-                                <button 
+                                <button
                                   onClick={() => handleDeleteAdmin(user.id)}
                                   className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 >
@@ -316,7 +304,6 @@ const Settings = () => {
                     <Plus className="w-5 h-5 text-green-600" />
                     <h5 className="font-semibold text-green-800">Add New Admin</h5>
                   </div>
-
                   <form onSubmit={handleAddNewAdmin} className="max-w-md mx-auto">
                     <div className="grid grid-cols-1 gap-4">
                       <div>
@@ -330,7 +317,6 @@ const Settings = () => {
                           required
                         />
                       </div>
-
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                         <input
@@ -343,7 +329,6 @@ const Settings = () => {
                           minLength={6}
                         />
                       </div>
-
                       <button
                         type="submit"
                         className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
