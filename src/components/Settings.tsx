@@ -55,31 +55,44 @@ const Settings = () => {
   const handleStoreSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("🟡 Submitting form...");
     const formData = new FormData();
+
     formData.append("name", storeForm.name || "");
     formData.append("phone", storeForm.phone || "");
     formData.append("address", storeForm.address || "");
 
+    console.log("🟢 Appended basic form fields");
+    console.log("🧾 Name:", storeForm.name);
+    console.log("🧾 Phone:", storeForm.phone);
+    console.log("🧾 Address:", storeForm.address);
+
     if (imageFile instanceof File) {
-      console.log("✅ Valid image file selected:");
-      console.log("Type:", imageFile.type);
-      console.log("Name:", imageFile.name);
-      console.log("Size (KB):", (imageFile.size / 1024).toFixed(2));
+      console.log("🟢 Image file is valid File instance ✅");
+      console.log("📸 Image File Details:");
+      console.log("- Name:", imageFile.name);
+      console.log("- Type:", imageFile.type);
+      console.log("- Size (KB):", (imageFile.size / 1024).toFixed(2));
       formData.append("image", imageFile);
     } else {
-      console.warn("⚠️ No valid image file selected or file is null.");
+      console.warn("⚠️ imageFile is not a valid File or is null ❌");
     }
 
-    // Debug: log all FormData entries
-    console.log("📦 FormData content:");
+    // Print FormData entries
+    console.log("📦 Final FormData Contents:");
     for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
+      console.log(`➡️ ${key}:`, value);
     }
 
     try {
+      console.log("🚀 Sending FormData to API...");
       await updateStoreDetails(formData);
-    } catch (error) {
-      console.error("❌ Failed to update store details:", error);
+      console.log("✅ Store update successful");
+    } catch (error: any) {
+      console.error("❌ Store update failed:", error);
+      if (error.response?.data) {
+        console.error("🧨 Backend Validation Errors:", error.response.data);
+      }
     }
   };
 
@@ -147,11 +160,16 @@ const Settings = () => {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          console.log("📸 File selected:", file.name, file.type, file.size);
+                          console.log("🟢 Image file selected:");
+                          console.log("- Name:", file.name);
+                          console.log("- Type:", file.type);
+                          console.log("- Size (KB):", (file.size / 1024).toFixed(2));
                           setImageFile(file);
                           setImagePreview(URL.createObjectURL(file));
                         } else {
-                          console.warn("🚫 No file selected");
+                          console.warn("🟡 No image file selected");
+                          setImageFile(null);
+                          setImagePreview(null);
                         }
                       }}
                       className="w-full border border-gray-300 rounded-lg px-4 py-2"
@@ -180,4 +198,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
