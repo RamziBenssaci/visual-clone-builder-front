@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   Settings as SettingsIcon,
-  User,
-  Edit,
-  Trash2,
-  Plus,
   Store,
   ChevronDown,
   ChevronUp
@@ -21,25 +17,17 @@ interface AdminUser {
 
 const Settings = () => {
   const { storeDetails, updateStoreDetails } = useStore();
+
   const [storeForm, setStoreForm] = useState({
     name: "",
     phone: "",
     address: ""
   });
 
-  const [newUsername, setNewUsername] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
-  const [newAdminUsername, setNewAdminUsername] = useState("");
-  const [newAdminPassword, setNewAdminPassword] = useState("");
-
-  const [showStoreDetails, setShowStoreDetails] = useState(false);
-  const [showSystemSettings, setShowSystemSettings] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showStoreDetails, setShowStoreDetails] = useState(false);
 
   useEffect(() => {
     if (storeDetails) {
@@ -52,7 +40,6 @@ const Settings = () => {
     fetchAdminUsers();
   }, [storeDetails]);
 
-  
   const fetchAdminUsers = async () => {
     try {
       const response = await adminApi.getAdmins();
@@ -73,56 +60,19 @@ const Settings = () => {
     formData.append("phone", storeForm.phone);
     formData.append("address", storeForm.address);
 
-    if (imageFile) {
+    if (imageFile instanceof File) {
       formData.append("image", imageFile);
+    }
+
+    // Debug: log all FormData entries
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
     }
 
     try {
       await updateStoreDetails(formData);
     } catch (error) {
       console.error("Failed to update store details:", error);
-    }
-  };
-
-  const handleUpdateCredentials = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await adminApi.updateCredentials({
-        newUsername: newUsername || undefined,
-        currentPassword,
-        newPassword: newPassword || undefined,
-        confirmPassword: confirmPassword || undefined
-      });
-      setNewUsername("");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (error) {
-      console.error("Failed to update credentials:", error);
-    }
-  };
-
-  const handleAddNewAdmin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await adminApi.createAdmin({
-        username: newAdminUsername,
-        password: newAdminPassword
-      });
-      setNewAdminUsername("");
-      setNewAdminPassword("");
-      fetchAdminUsers();
-    } catch (error) {
-      console.error("Failed to add admin:", error);
-    }
-  };
-
-  const handleDeleteAdmin = async (id: number) => {
-    try {
-      await adminApi.deleteAdmin(id);
-      fetchAdminUsers();
-    } catch (error) {
-      console.error("Failed to delete admin:", error);
     }
   };
 
@@ -154,32 +104,31 @@ const Settings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
                     <input
                       type="text"
-                      placeholder="Enter store name"
                       value={storeForm.name}
                       onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       required
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3"
                     />
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                     <input
                       type="tel"
-                      placeholder="055-123-4567"
                       value={storeForm.phone}
                       onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       required
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3"
                     />
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Address</label>
                     <textarea
-                      placeholder="Enter store address"
                       value={storeForm.address}
                       onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
                       required
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 h-24 resize-none"
                     />
                   </div>
 
@@ -195,37 +144,29 @@ const Settings = () => {
                           setImagePreview(URL.createObjectURL(file));
                         }
                       }}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-sm file:bg-green-600 file:text-white file:px-4 file:py-2 file:border-none file:rounded-md file:cursor-pointer"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2"
                     />
                     {imagePreview && (
                       <div className="mt-4">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="w-24 h-24 object-cover rounded-lg border"
-                        />
+                        <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded-lg border" />
                       </div>
                     )}
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
                   >
-                    <Store className="w-4 h-4" />
-                    <span>Update Store Details</span>
+                    Update Store Details
                   </button>
                 </form>
               </div>
             </div>
           )}
         </div>
-
-        {/* System Settings ... unchanged */}
       </div>
     </div>
   );
 };
 
 export default Settings;
-
