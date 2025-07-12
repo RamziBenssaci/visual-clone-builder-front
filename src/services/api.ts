@@ -30,7 +30,10 @@ api.interceptors.response.use(
 // Store Details API
 export const storeApi = {
   getStore: () => api.get('/store'),
-  updateStore: (data: any) => api.put('/store', data),
+updateStore: (data: FormData) =>
+  api.post('/store?_method=PUT', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 };
 
 // Dashboard Analytics API
