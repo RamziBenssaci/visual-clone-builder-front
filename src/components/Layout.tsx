@@ -25,47 +25,48 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <div className="bg-white/20 p-2 rounded-lg">
-            <Award className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-lg lg:text-xl font-bold">Merchant Admin Panel</h1>
-            <p className="text-blue-100 text-xs lg:text-sm hidden sm:block">Complete loyalty program management</p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2 lg:space-x-4">
-          <button 
-            onClick={handleCustomerPortal}
-            className="bg-white/20 hover:bg-white/30 px-2 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-medium transition-colors hidden sm:block"
-          >
-            Customer Portal
-          </button>
-      <div className="flex items-center space-x-3">
-  <span className="text-xs lg:text-sm hidden md:inline">Welcome</span>
-  <span className="font-medium text-xs lg:text-sm">Admin</span>
-  <button
-    onClick={() => {
-      // Clear cookies manually
-      document.cookie = "admin_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "admin_id_plain=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "admin_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      // Redirect instantly
-      window.location.replace("https://test.freedomprocessing3.com/");
-    }}
-    className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded-lg text-xs font-medium transition-colors"
-  >
-    Logout
-  </button>
-  <div className="bg-white/20 p-2 rounded-full">
-    <User className="w-4 h-4" />
+    <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-4 flex justify-between items-center">
+  <div className="flex items-center space-x-3">
+    <div className="bg-white/20 p-2 rounded-lg">
+      <Award className="w-6 h-6" />
+    </div>
+    <div>
+      <h1 className="text-lg lg:text-xl font-bold">Merchant Admin Panel</h1>
+      <p className="text-blue-100 text-xs lg:text-sm hidden sm:block">Complete loyalty program management</p>
+    </div>
   </div>
-</div>
 
-          </div>
-        </div>
-      </header>
+  <div className="flex items-center space-x-2 lg:space-x-4">
+    <button 
+      onClick={handleCustomerPortal}
+      className="bg-white/20 hover:bg-white/30 px-2 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-medium transition-colors hidden sm:block"
+    >
+      Customer Portal
+    </button>
+
+    <div className="flex items-center space-x-3">
+      <span className="text-xs lg:text-sm hidden md:inline">Welcome</span>
+      <span className="font-medium text-xs lg:text-sm">Admin</span>
+
+      <button
+        onClick={() => {
+          document.cookie = "admin_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie = "admin_id_plain=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie = "admin_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          window.location.replace("https://test.freedomprocessing3.com/");
+        }}
+        className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded-lg text-xs font-medium transition-colors"
+      >
+        Logout
+      </button>
+
+      <div className="bg-white/20 p-2 rounded-full">
+        <User className="w-4 h-4" />
+      </div>
+    </div>
+  </div>
+</header>
+
 
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b">
