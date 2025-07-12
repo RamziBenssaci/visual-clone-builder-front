@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// ... same import and setup at the top
+import { useState, useEffect, useRef } from "react";
 import { Settings as SettingsIcon, User, Edit, Trash2, Plus, Store, ChevronDown, ChevronUp } from "lucide-react";
 import { useStore } from "../contexts/StoreContext";
 import { adminApi } from "../services/api";
@@ -17,6 +18,10 @@ const Settings = () => {
     phone: "",
     address: ""
   });
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [newUsername, setNewUsername] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -53,10 +58,25 @@ const Settings = () => {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleStoreSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateStoreDetails(storeForm);
+      const formData = new FormData();
+      formData.append("name", storeForm.name);
+      formData.append("phone", storeForm.phone);
+      formData.append("address", storeForm.address);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+      await updateStoreDetails(formData);
     } catch (error) {
       console.error("Failed to update store details:", error);
     }
@@ -160,6 +180,33 @@ const Settings = () => {
                       required
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
+                    <div className="flex items-center space-x-4">
+                      {imagePreview ? (
+                        <img src={imagePreview} alt="Preview" className="w-20 h-20 object-cover rounded-lg border" />
+                      ) : (
+                        <div className="w-20 h-20 bg-gray-100 border flex items-center justify-center text-sm text-gray-400 rounded-lg">No Image</div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-2 bg-gray-200 rounded-md text-sm hover:bg-gray-300"
+                      >
+                        Choose Image
+                      </button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">JPEG, PNG, JPG, WEBP — max 2MB</p>
+                  </div>
+
                   <button
                     type="submit"
                     className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
