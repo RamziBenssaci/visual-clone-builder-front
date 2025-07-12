@@ -131,6 +131,19 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+useEffect(() => {
+  const cookies = document.cookie.split(';').reduce((acc, curr) => {
+    const [key, value] = curr.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+
+  if (cookies.admin_id_plain) {
+    console.log('Admin ID is:', cookies.admin_id_plain);
+  } else {
+    console.warn('Admin ID not found in cookies');
+  }
+}, []);
 
   if (loading) {
     return (
