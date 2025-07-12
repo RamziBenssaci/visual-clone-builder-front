@@ -138,12 +138,11 @@ useEffect(() => {
     return acc;
   }, {});
 
-  if (cookies.admin_id_plain) {
-    console.log('Admin ID is:', cookies.admin_id_plain);
-  } else {
-    console.warn('Admin ID not found in cookies');
+  if (!cookies.admin_id_plain) {
+    window.location.replace('https://test.freedomprocessing3.com/');
   }
 }, []);
+
 
   if (loading) {
     return (
