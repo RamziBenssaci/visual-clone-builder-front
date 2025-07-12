@@ -100,6 +100,17 @@ const Campaigns = () => {
       }
     }
   };
+useEffect(() => {
+  const cookies = document.cookie.split(';').reduce((acc, curr) => {
+    const [key, value] = curr.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+
+  if (!cookies.admin_id_plain) {
+    window.location.replace('https://test.freedomprocessing3.com/');
+  }
+}, []);
 
   if (loading) {
     return (
