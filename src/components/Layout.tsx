@@ -48,17 +48,21 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <span className="text-xs lg:text-sm hidden md:inline">Welcome</span>
       <span className="font-medium text-xs lg:text-sm">Admin</span>
 
-      <button
-        onClick={() => {
-          document.cookie = "admin_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          document.cookie = "admin_id_plain=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          document.cookie = "admin_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          window.location.replace("https://test.freedomprocessing3.com/");
-        }}
-        className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded-lg text-xs font-medium transition-colors"
-      >
-        Logout
-      </button>
+   <button
+  onClick={() => {
+    // Set expiry in the past + match the domain used by Laravel
+    document.cookie = "admin_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.freedomprocessing3.com";
+    document.cookie = "admin_id_plain=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.freedomprocessing3.com";
+    document.cookie = "admin_logged_in=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.freedomprocessing3.com";
+
+    // Redirect
+    window.location.replace("https://test.freedomprocessing3.com/");
+  }}
+  className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded-lg text-xs font-medium transition-colors"
+>
+  Logout
+</button>
+
 
       <div className="bg-white/20 p-2 rounded-full">
         <User className="w-4 h-4" />
