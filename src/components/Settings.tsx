@@ -29,6 +29,8 @@ const Settings = () => {
 
   const [showStoreDetails, setShowStoreDetails] = useState(false);
   const [showSystemSettings, setShowSystemSettings] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     if (storeDetails) {
