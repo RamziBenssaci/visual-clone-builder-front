@@ -12,7 +12,7 @@ interface AdminUser {
   id: number;
   username: string;
   lastLogin: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
 const Settings = () => {
@@ -32,9 +32,9 @@ const Settings = () => {
   useEffect(() => {
     if (storeDetails) {
       setStoreForm({
-        name: storeDetails.name,
-        phone: storeDetails.phone,
-        address: storeDetails.address
+        name: storeDetails.name ?? "",
+        phone: storeDetails.phone ?? "",
+        address: storeDetails.address ?? ""
       });
     }
     fetchAdminUsers();
@@ -56,17 +56,17 @@ const Settings = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", storeForm.name);
-    formData.append("phone", storeForm.phone);
-    formData.append("address", storeForm.address);
+    formData.append("name", storeForm.name || "");
+    formData.append("phone", storeForm.phone || "");
+    formData.append("address", storeForm.address || "");
 
     if (imageFile instanceof File) {
       formData.append("image", imageFile);
     }
 
-    // Debug: log all FormData entries
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
+    // Debug: print what you're sending
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
     }
 
     try {
