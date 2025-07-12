@@ -7,6 +7,8 @@ const api = axios.create({
      'Accept': 'application/json',
 
   },
+    withCredentials: true
+
 });
 
 // Add request interceptor for authentication
