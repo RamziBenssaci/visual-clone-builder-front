@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Settings as SettingsIcon,
-  Store,
-  ChevronDown,
-  ChevronUp
-} from "lucide-react";
+import { Settings as SettingsIcon, User, Edit, Trash2, Plus, Store, ChevronDown, ChevronUp } from "lucide-react";
 import { useStore } from "../contexts/StoreContext";
 import { adminApi } from "../services/api";
 
@@ -12,29 +7,35 @@ interface AdminUser {
   id: number;
   username: string;
   lastLogin: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
 }
 
 const Settings = () => {
   const { storeDetails, updateStoreDetails } = useStore();
-
   const [storeForm, setStoreForm] = useState({
     name: "",
     phone: "",
     address: ""
   });
 
+  const [newUsername, setNewUsername] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [newAdminUsername, setNewAdminUsername] = useState("");
+  const [newAdminPassword, setNewAdminPassword] = useState("");
+
   const [showStoreDetails, setShowStoreDetails] = useState(false);
+  const [showSystemSettings, setShowSystemSettings] = useState(false);
 
   useEffect(() => {
     if (storeDetails) {
       setStoreForm({
-        name: storeDetails.name ?? "",
-        phone: storeDetails.phone ?? "",
-        address: storeDetails.address ?? ""
+        name: storeDetails.name,
+        phone: storeDetails.phone,
+        address: storeDetails.address
       });
     }
     fetchAdminUsers();
@@ -54,45 +55,52 @@ const Settings = () => {
 
   const handleStoreSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("🟡 Submitting form...");
-    const formData = new FormData();
-
-    formData.append("name", storeForm.name || "");
-    formData.append("phone", storeForm.phone || "");
-    formData.append("address", storeForm.address || "");
-
-    console.log("🟢 Appended basic form fields");
-    console.log("🧾 Name:", storeForm.name);
-    console.log("🧾 Phone:", storeForm.phone);
-    console.log("🧾 Address:", storeForm.address);
-
-    if (imageFile instanceof File) {
-      console.log("🟢 Image file is valid File instance ✅");
-      console.log("📸 Image File Details:");
-      console.log("- Name:", imageFile.name);
-      console.log("- Type:", imageFile.type);
-      console.log("- Size (KB):", (imageFile.size / 1024).toFixed(2));
-      formData.append("image", imageFile);
-    } else {
-      console.warn("⚠️ imageFile is not a valid File or is null ❌");
-    }
-
-    // Print FormData entries
-    console.log("📦 Final FormData Contents:");
-    for (let [key, value] of formData.entries()) {
-      console.log(`➡️ ${key}:`, value);
-    }
-
     try {
-      console.log("🚀 Sending FormData to API...");
-      await updateStoreDetails(formData);
-      console.log("✅ Store update successful");
-    } catch (error: any) {
-      console.error("❌ Store update failed:", error);
-      if (error.response?.data) {
-        console.error("🧨 Backend Validation Errors:", error.response.data);
-      }
+      await updateStoreDetails(storeForm);
+    } catch (error) {
+      console.error("Failed to update store details:", error);
+    }
+  };
+
+  const handleUpdateCredentials = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await adminApi.updateCredentials({
+        newUsername: newUsername || undefined,
+        currentPassword,
+        newPassword: newPassword || undefined,
+        confirmPassword: confirmPassword || undefined
+      });
+      setNewUsername("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error("Failed to update credentials:", error);
+    }
+  };
+
+  const handleAddNewAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await adminApi.createAdmin({
+        username: newAdminUsername,
+        password: newAdminPassword
+      });
+      setNewAdminUsername("");
+      setNewAdminPassword("");
+      fetchAdminUsers();
+    } catch (error) {
+      console.error("Failed to add admin:", error);
+    }
+  };
+
+  const handleDeleteAdmin = async (id: number) => {
+    try {
+      await adminApi.deleteAdmin(id);
+      fetchAdminUsers();
+    } catch (error) {
+      console.error("Failed to delete admin:", error);
     }
   };
 
@@ -119,75 +127,218 @@ const Settings = () => {
           {showStoreDetails && (
             <div className="p-6">
               <div className="max-w-md mx-auto">
-                <form onSubmit={handleStoreSubmit} className="space-y-4" encType="multipart/form-data">
+                <form onSubmit={handleStoreSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
                     <input
                       type="text"
+                      placeholder="Enter store name"
                       value={storeForm.name}
                       onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                     <input
                       type="tel"
+                      placeholder="055-123-4567"
                       value={storeForm.phone}
                       onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Address</label>
                     <textarea
+                      placeholder="Enter store address"
                       value={storeForm.address}
                       onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 h-24 resize-none"
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          console.log("🟢 Image file selected:");
-                          console.log("- Name:", file.name);
-                          console.log("- Type:", file.type);
-                          console.log("- Size (KB):", (file.size / 1024).toFixed(2));
-                          setImageFile(file);
-                          setImagePreview(URL.createObjectURL(file));
-                        } else {
-                          console.warn("🟡 No image file selected");
-                          setImageFile(null);
-                          setImagePreview(null);
-                        }
-                      }}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                    />
-                    {imagePreview && (
-                      <div className="mt-4">
-                        <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded-lg border" />
-                      </div>
-                    )}
-                  </div>
-
                   <button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
                   >
-                    Update Store Details
+                    <Store className="w-4 h-4" />
+                    <span>Update Store Details</span>
                   </button>
                 </form>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm">
+          <div
+            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg cursor-pointer flex items-center justify-between"
+            onClick={() => setShowSystemSettings(!showSystemSettings)}
+          >
+            <div className="flex items-center space-x-2">
+              <SettingsIcon className="w-5 h-5" />
+              <h3 className="text-lg font-semibold">System Settings</h3>
+            </div>
+            {showSystemSettings ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          </div>
+
+          {showSystemSettings && (
+            <div className="p-6 space-y-8">
+              <div className="bg-gray-50 rounded-lg p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-gray-800">Update Credentials</h4>
+                </div>
+                <div className="max-w-md mx-auto">
+                  <form onSubmit={handleUpdateCredentials} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">New Username (Optional)</label>
+                      <input
+                        type="text"
+                        placeholder="Current: admin"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Leave blank to keep current username</p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <h5 className="text-sm font-medium text-gray-700 mb-3">Change Password (Optional)</h5>
+                      <p className="text-xs text-gray-500 mb-3">Fill all three fields to change password</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                          <input
+                            type="password"
+                            placeholder="Enter current password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                          <input
+                            type="password"
+                            placeholder="Enter new password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                          <input
+                            type="password"
+                            placeholder="Confirm new password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 font-medium"
+                    >
+                      <SettingsIcon className="w-4 h-4" />
+                      <span>Update Credentials</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <h4 className="text-lg font-semibold text-gray-800">Admin Users Management</h4>
+                </div>
+                <div className="bg-white rounded-lg overflow-hidden shadow-sm mb-6">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="text-left py-3 px-4 font-medium text-gray-700">Username</th>
+                          <th className="text-left py-3 px-4 font-medium text-gray-700">Last Login</th>
+                          <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
+                          <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {adminUsers.map((user) => (
+                          <tr key={user.id} className="border-t">
+                            <td className="py-3 px-4 font-medium text-gray-800">{user.username}</td>
+                            <td className="py-3 px-4 text-gray-600">{user.lastLogin}</td>
+                            <td className="py-3 px-4">
+                              <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                                {user.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex space-x-2">
+                                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteAdmin(user.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Plus className="w-5 h-5 text-green-600" />
+                    <h5 className="font-semibold text-green-800">Add New Admin</h5>
+                  </div>
+                  <form onSubmit={handleAddNewAdmin} className="max-w-md mx-auto">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                        <input
+                          type="text"
+                          placeholder="Enter username"
+                          value={newAdminUsername}
+                          onChange={(e) => setNewAdminUsername(e.target.value)}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input
+                          type="password"
+                          placeholder="Enter password (min 6 chars)"
+                          value={newAdminPassword}
+                          onChange={(e) => setNewAdminPassword(e.target.value)}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          required
+                          minLength={6}
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add Admin</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           )}
