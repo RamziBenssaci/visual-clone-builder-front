@@ -1,6 +1,7 @@
 
 import { Phone, MapPin, Store } from "lucide-react";
 import { useStore } from "../contexts/StoreContext";
+import { useState, useEffect } from "react";
 
 const Footer = () => {
   const { storeDetails, loading } = useStore();
