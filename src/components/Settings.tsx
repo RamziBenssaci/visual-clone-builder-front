@@ -7,7 +7,7 @@ import {
   Plus,
   Store,
   ChevronDown,
-  ChevronUp,
+  ChevronUp
 } from "lucide-react";
 import { useStore } from "../contexts/StoreContext";
 import { adminApi } from "../services/api";
@@ -16,7 +16,7 @@ interface AdminUser {
   id: number;
   username: string;
   lastLogin: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
 }
 
 const Settings = () => {
@@ -24,11 +24,8 @@ const Settings = () => {
   const [storeForm, setStoreForm] = useState({
     name: "",
     phone: "",
-    address: "",
+    address: ""
   });
-
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [newUsername, setNewUsername] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -41,13 +38,15 @@ const Settings = () => {
 
   const [showStoreDetails, setShowStoreDetails] = useState(false);
   const [showSystemSettings, setShowSystemSettings] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (storeDetails) {
       setStoreForm({
         name: storeDetails.name,
         phone: storeDetails.phone,
-        address: storeDetails.address,
+        address: storeDetails.address
       });
     }
     fetchAdminUsers();
@@ -59,35 +58,16 @@ const Settings = () => {
       setAdminUsers(response.data.data);
     } catch (error) {
       setAdminUsers([
-        {
-          id: 1,
-          username: "admin",
-          lastLogin: "Jul 3, 2025, 03:43 PM",
-          status: "active",
-        },
-        {
-          id: 2,
-          username: "manager",
-          lastLogin: "Jul 2, 2025, 03:43 PM",
-          status: "active",
-        },
+        { id: 1, username: "admin", lastLogin: "Jul 3, 2025, 03:43 PM", status: "active" },
+        { id: 2, username: "manager", lastLogin: "Jul 2, 2025, 03:43 PM", status: "active" }
       ]);
     }
   };
 
   const handleStoreSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       await updateStoreDetails(storeForm);
-
-      // Optional: handle imageFile upload via FormData
-      // if (imageFile) {
-      //   const formData = new FormData();
-      //   formData.append("image", imageFile);
-      //   await yourImageUploadFunction(formData);
-      // }
-
     } catch (error) {
       console.error("Failed to update store details:", error);
     }
@@ -100,7 +80,7 @@ const Settings = () => {
         newUsername: newUsername || undefined,
         currentPassword,
         newPassword: newPassword || undefined,
-        confirmPassword: confirmPassword || undefined,
+        confirmPassword: confirmPassword || undefined
       });
       setNewUsername("");
       setCurrentPassword("");
@@ -116,7 +96,7 @@ const Settings = () => {
     try {
       await adminApi.createAdmin({
         username: newAdminUsername,
-        password: newAdminPassword,
+        password: newAdminPassword
       });
       setNewAdminUsername("");
       setNewAdminPassword("");
@@ -152,11 +132,7 @@ const Settings = () => {
               <Store className="w-5 h-5" />
               <h3 className="text-lg font-semibold">Store Details</h3>
             </div>
-            {showStoreDetails ? (
-              <ChevronUp className="w-5 h-5" />
-            ) : (
-              <ChevronDown className="w-5 h-5" />
-            )}
+            {showStoreDetails ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </div>
 
           {showStoreDetails && (
@@ -174,7 +150,6 @@ const Settings = () => {
                       required
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                     <input
@@ -186,7 +161,6 @@ const Settings = () => {
                       required
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Address</label>
                     <textarea
@@ -198,7 +172,7 @@ const Settings = () => {
                     />
                   </div>
 
-                  {/* ✅ Image Upload Field */}
+                  {/* Store Image Upload */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
                     <input
@@ -237,8 +211,7 @@ const Settings = () => {
           )}
         </div>
 
-        {/* System Settings section continues below... */}
-        {/* (no changes needed) */}
+        {/* System settings block untouched */}
       </div>
     </div>
   );
