@@ -164,6 +164,30 @@ const Settings = () => {
                     type="submit"
                     className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
                   >
+                    div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      if (file) {
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      }
+    }}
+    className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-sm file:bg-green-600 file:text-white file:px-4 file:py-2 file:border-none file:rounded-md file:cursor-pointer"
+  />
+  {imagePreview && (
+    <div className="mt-4">
+      <img
+        src={imagePreview}
+        alt="Preview"
+        className="w-24 h-24 object-cover rounded-lg border"
+      />
+    </div>
+  )}
+</div>
                     <Store className="w-4 h-4" />
                     <span>Update Store Details</span>
                   </button>
