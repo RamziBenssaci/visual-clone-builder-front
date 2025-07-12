@@ -172,7 +172,6 @@ const Settings = () => {
                     />
                   </div>
 
-                  {/* Store Image Upload */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
                     <input
@@ -211,12 +210,7 @@ const Settings = () => {
           )}
         </div>
 
-        {/* System settings block untouched */}
-      </div>
-    </div>
-  );
-
-  <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg shadow-sm">
           <div
             className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg cursor-pointer flex items-center justify-between"
             onClick={() => setShowSystemSettings(!showSystemSettings)}
@@ -389,8 +383,6 @@ const Settings = () => {
       </div>
     </div>
   );
-};
-
 };
 
 export default Settings;
