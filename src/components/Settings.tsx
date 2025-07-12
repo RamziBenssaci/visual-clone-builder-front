@@ -34,6 +34,9 @@ const Settings = () => {
   const [showStoreDetails, setShowStoreDetails] = useState(false);
   const [showSystemSettings, setShowSystemSettings] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   useEffect(() => {
     if (storeDetails) {
       setStoreForm({
@@ -94,6 +97,8 @@ const Settings = () => {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      setSuccessMessage("Your credentials have been updated successfully.");
+      setTimeout(() => setSuccessMessage(null), 4000);
     } catch (error) {
       console.error("Failed to update credentials:", error);
     }
@@ -101,6 +106,7 @@ const Settings = () => {
 
   const handleAddNewAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
     try {
       await adminApi.createAdmin({
         username: newAdminUsername,
@@ -109,14 +115,17 @@ const Settings = () => {
       setNewAdminUsername("");
       setNewAdminPassword("");
       fetchAdminUsers();
+      setSuccessMessage("New admin has been added successfully.");
+      setTimeout(() => setSuccessMessage(null), 4000);
     } catch (error) {
       console.error("Failed to add admin:", error);
     }
   };
 
   const handleDeleteAdmin = async (id: number) => {
+    setErrorMessage(null);
     if (id === 7) {
-      alert("You cannot delete the Super Admin. This account is required to maintain system control and stability.");
+      setErrorMessage("You cannot delete the Super Admin. This account is essential to keep your store safe and always accessible.");
       return;
     }
     try {
@@ -128,232 +137,136 @@ const Settings = () => {
   };
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto p-4">
       <div className="flex items-center space-x-2 mb-6">
         <SettingsIcon className="w-5 h-5 text-gray-600" />
         <h2 className="text-2xl font-bold text-gray-800">Admin Settings</h2>
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Store Details */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div
-            className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg cursor-pointer flex items-center justify-between"
-            onClick={() => setShowStoreDetails(!showStoreDetails)}
-          >
-            <div className="flex items-center space-x-2">
-              <Store className="w-5 h-5" />
-              <h3 className="text-lg font-semibold">Store Details</h3>
-            </div>
-            {showStoreDetails ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-          </div>
-          {showStoreDetails && (
-            <div className="p-6">
-              <div className="max-w-md mx-auto">
-                <form onSubmit={handleStoreSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
-                    <input
-                      type="text"
-                      value={storeForm.name}
-                      onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      value={storeForm.phone}
-                      onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Address</label>
-                    <textarea
-                      value={storeForm.address}
-                      onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 h-24 resize-none"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
-                    <div className="flex items-center space-x-4">
-                      {imagePreview ? (
-                        <img src={imagePreview} alt="Preview" className="w-20 h-20 object-cover rounded-lg border" />
-                      ) : (
-                        <div className="w-20 h-20 bg-gray-100 border flex items-center justify-center text-sm text-gray-400 rounded-lg">No Image</div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-2 bg-gray-200 rounded-md text-sm hover:bg-gray-300"
-                      >
-                        Choose Image
-                      </button>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">JPEG, PNG, JPG, WEBP — max 2MB</p>
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
-                  >
-                    Update Store Details
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
+      {errorMessage && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
+          <strong className="font-semibold">Warning: </strong> {errorMessage}
         </div>
+      )}
 
-        {/* System Settings */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div
-            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg cursor-pointer flex items-center justify-between"
-            onClick={() => setShowSystemSettings(!showSystemSettings)}
-          >
-            <div className="flex items-center space-x-2">
-              <SettingsIcon className="w-5 h-5" />
-              <h3 className="text-lg font-semibold">System Settings</h3>
-            </div>
-            {showSystemSettings ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-6">
+          <strong className="font-semibold">Success: </strong> {successMessage}
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg shadow-sm mb-8">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <User className="w-5 h-5" />
+            <h3 className="text-lg font-semibold">Admin Users</h3>
           </div>
-          {showSystemSettings && (
-            <div className="p-6 space-y-8">
-              {/* Update Credentials */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <div className="max-w-md mx-auto">
-                  <form onSubmit={handleUpdateCredentials} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">New Username (optional)</label>
-                      <input
-                        type="text"
-                        placeholder="Leave blank to keep current"
-                        value={newUsername}
-                        onChange={(e) => setNewUsername(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3"
-                      />
-                    </div>
-                    <div className="border-t pt-4 space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                        <input
-                          type="password"
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-4 py-3"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                        <input
-                          type="password"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-4 py-3"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                        <input
-                          type="password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-4 py-3"
-                        />
-                      </div>
-                    </div>
+        </div>
+        <div className="overflow-x-auto p-4">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Username</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Last Login</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Status</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {adminUsers.map((user) => (
+                <tr key={user.id} className="border-t">
+                  <td className="py-3 px-4 font-medium text-gray-800">{user.username}</td>
+                  <td className="py-3 px-4 text-gray-600">{user.lastLogin}</td>
+                  <td className="py-3 px-4">
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                      {user.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
                     <button
-                      type="submit"
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+                      onClick={() => handleDeleteAdmin(user.id)}
+                      className="px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-md text-sm font-medium transition"
                     >
-                      Update Credentials
+                      Delete
                     </button>
-                  </form>
-                </div>
-              </div>
-
-              {/* Admin Table */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <div className="overflow-x-auto mb-6">
-                  <table className="w-full">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="text-left py-3 px-4">Username</th>
-                        <th className="text-left py-3 px-4">Last Login</th>
-                        <th className="text-left py-3 px-4">Status</th>
-                        <th className="text-left py-3 px-4">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {adminUsers.map((user) => (
-                        <tr key={user.id} className="border-t">
-                          <td className="py-3 px-4">{user.username}</td>
-                          <td className="py-3 px-4">{user.lastLogin}</td>
-                          <td className="py-3 px-4">
-                            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                              {user.status}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <button
-                              onClick={() => handleDeleteAdmin(user.id)}
-                              className="text-red-600 hover:underline"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Add New Admin */}
-                <form onSubmit={handleAddNewAdmin} className="max-w-md mx-auto space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                    <input
-                      type="text"
-                      value={newAdminUsername}
-                      onChange={(e) => setNewAdminUsername(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input
-                      type="password"
-                      value={newAdminPassword}
-                      onChange={(e) => setNewAdminPassword(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                      required
-                      minLength={6}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
-                  >
-                    Add Admin
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+
+        <div className="bg-gray-50 border-t px-6 py-6">
+          <h4 className="text-md font-semibold text-gray-800 mb-4">Add New Admin</h4>
+          <form onSubmit={handleAddNewAdmin} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
+            <input
+              type="text"
+              placeholder="Username"
+              value={newAdminUsername}
+              onChange={(e) => setNewAdminUsername(e.target.value)}
+              className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password (min 6 chars)"
+              value={newAdminPassword}
+              onChange={(e) => setNewAdminPassword(e.target.value)}
+              className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              minLength={6}
+            />
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition"
+              >
+                Add Admin
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Update Your Credentials</h3>
+        <form onSubmit={handleUpdateCredentials} className="space-y-4 max-w-lg">
+          <input
+            type="text"
+            placeholder="New Username (optional)"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+          />
+          <input
+            type="password"
+            placeholder="Current Password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+            required
+          />
+          <input
+            type="password"
+            placeholder="New Password (optional)"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+          />
+          <input
+            type="password"
+            placeholder="Confirm New Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2"
+          />
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition"
+          >
+            Update Credentials
+          </button>
+        </form>
       </div>
     </div>
   );
