@@ -64,14 +64,25 @@ const Settings = () => {
     }
   };
 
-  const handleStoreSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await updateStoreDetails(storeForm);
-    } catch (error) {
-      console.error("Failed to update store details:", error);
-    }
-  };
+const handleStoreSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append("name", storeForm.name);
+  formData.append("phone", storeForm.phone);
+  formData.append("address", storeForm.address);
+
+  if (imageFile) {
+    formData.append("image", imageFile);
+  }
+
+  try {
+    await updateStoreDetails(formData); // Make sure your API method sends FormData correctly
+  } catch (error) {
+    console.error("Failed to update store details:", error);
+  }
+};
+
 
   const handleUpdateCredentials = async (e: React.FormEvent) => {
     e.preventDefault();
