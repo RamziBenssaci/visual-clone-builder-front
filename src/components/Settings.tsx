@@ -52,13 +52,6 @@ const Settings = () => {
     fetchAdminUsers();
   }, [storeDetails]);
 
-const updateStoreDetails = async (formData: FormData) => {
-  return axios.post('/api/store/update', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-};
   
   const fetchAdminUsers = async () => {
     try {
