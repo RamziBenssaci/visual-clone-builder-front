@@ -136,4 +136,95 @@ const Settings = () => {
         <div className="bg-white rounded-lg shadow-sm">
           <div
             className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-t-lg cursor-pointer flex items-center justify-between"
-            onClick={() => setShowStoreDetails(
+            onClick={() => setShowStoreDetails(!showStoreDetails)}
+          >
+            <div className="flex items-center space-x-2">
+              <Store className="w-5 h-5" />
+              <h3 className="text-lg font-semibold">Store Details</h3>
+            </div>
+            {showStoreDetails ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          </div>
+
+          {showStoreDetails && (
+            <div className="p-6">
+              <div className="max-w-md mx-auto">
+                <form onSubmit={handleStoreSubmit} className="space-y-4" encType="multipart/form-data">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter store name"
+                      value={storeForm.name}
+                      onChange={(e) => setStoreForm({ ...storeForm, name: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input
+                      type="tel"
+                      placeholder="055-123-4567"
+                      value={storeForm.phone}
+                      onChange={(e) => setStoreForm({ ...storeForm, phone: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Address</label>
+                    <textarea
+                      placeholder="Enter store address"
+                      value={storeForm.address}
+                      onChange={(e) => setStoreForm({ ...storeForm, address: e.target.value })}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Store Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setImageFile(file);
+                          setImagePreview(URL.createObjectURL(file));
+                        }
+                      }}
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-sm file:bg-green-600 file:text-white file:px-4 file:py-2 file:border-none file:rounded-md file:cursor-pointer"
+                    />
+                    {imagePreview && (
+                      <div className="mt-4">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-24 h-24 object-cover rounded-lg border"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 font-medium"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>Update Store Details</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* System Settings ... unchanged */}
+      </div>
+    </div>
+  );
+};
+
+export default Settings;
+
