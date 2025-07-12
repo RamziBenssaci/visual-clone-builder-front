@@ -61,10 +61,17 @@ const Settings = () => {
     formData.append("address", storeForm.address || "");
 
     if (imageFile instanceof File) {
+      console.log("✅ Valid image file selected:");
+      console.log("Type:", imageFile.type);
+      console.log("Name:", imageFile.name);
+      console.log("Size (KB):", (imageFile.size / 1024).toFixed(2));
       formData.append("image", imageFile);
+    } else {
+      console.warn("⚠️ No valid image file selected or file is null.");
     }
 
-    // Debug: print what you're sending
+    // Debug: log all FormData entries
+    console.log("📦 FormData content:");
     for (let [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
     }
@@ -72,7 +79,7 @@ const Settings = () => {
     try {
       await updateStoreDetails(formData);
     } catch (error) {
-      console.error("Failed to update store details:", error);
+      console.error("❌ Failed to update store details:", error);
     }
   };
 
@@ -140,8 +147,11 @@ const Settings = () => {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          console.log("📸 File selected:", file.name, file.type, file.size);
                           setImageFile(file);
                           setImagePreview(URL.createObjectURL(file));
+                        } else {
+                          console.warn("🚫 No file selected");
                         }
                       }}
                       className="w-full border border-gray-300 rounded-lg px-4 py-2"
@@ -170,3 +180,4 @@ const Settings = () => {
 };
 
 export default Settings;
+
